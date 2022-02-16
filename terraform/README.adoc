@@ -1,0 +1,85 @@
+= Terraform Shared Tooling for the Jenkins Infrastructure
+
+This directory holds the reusable tooling for terraform-managed resources for the link:https://www.jenkins.io/projects/infrastructure/[Jenkins Infrastructure Project].
+
+== Requirements
+
+* The following tools (you may check the Docker image used by the CI at https://github.com/jenkins-infra/docker-hashicorp-tools with the up-to-date requirements):
+** Terraform version 1.0.11 CLI to provision the infrastructure
+** GNU `make` to ease running the tasks involved in this provisioning
+** link:https://github.com/tfsec/tfsec[tfsec]
+** link:https://golang.org/[Golang] to allow testing with link:https://terratest.gruntwork.io/[terratest]
+
+* The git command line to allow cloning the repository and its submodule link:https://github.com/jenkins-infra/shared-tools[shared-tools]
+** From the root of your Terraform project, ensure that you have checked the submodule pointing to the current "shared-tools" repository (hosting this documentation) with the following command:
+
+[source,bash]
+----
+git submodule update --init --recursive
+----
+
+== Workflow
+
+For each terraform project using this tooling, the following hypothesis are made:
+
+* There should be 2 different environments, each one with its own distinct set of cloud credentials (such as APi keys) and link:https://www.terraform.io/language/settings/backends[Terraform Backends]:
+** "Staging" is used by the test harness and should be either empty or cleaned up regularly to avoid cloud costs
+** "Production" is where the real life and costs happen (as usual)
+
+* All tasks of the workflow (deployment, tests, etc.) should be done through a <<Jenkins Pipeline>> (read below) associated with the project repository (excepts for edge cases)
+
+=== Available Commands
+
+There is a Makefile, used either by the <<Jenkins Pipeline>> or an infrastructure administrator (e.g. manually) that provides the following commands:
+
+* `make help` to print the Makefile manual with all available targets (useful when this `README` is not synced with the `Makefile`)
+* `make lint` to statically lint the  Terraform project resources. It fails if you didn't.
+* `make prepare` to initialize the local Terraform project (⚠️ generates a temporary directory `.terraform/`)
+* `make validate` to run a semantic and security validation of your Terraform project files
+* `make common-tests` to execute the "common" test harness on the project (uses the terratest code in `./tests/`)
+* `make plan` to write the planned changes into $(PLAN_FILE_NAME) (but do NOT apply them)
+* `make deploy` to apply the changes to the infrastructure (implies terraform apply with no approval)
+* `make clean` to cleanup the local terraform setup (such as the `.terraform/` directory)
+
+=== Jenkins Pipeline
+
+Add the following link:https://www.jenkins.io/doc/book/pipeline/shared-libraries/[Jenkins Pipeline Shared Library] to your Jenkins instance: link:https://github.com/jenkins-infra/pipeline-library[].
+
+You can now use the function `terraform()` in your Jenkins Pipeline to use the centralized workflow for Terraform.
+It defines the following cases:
+
+* When a build starts on the principal branch:
+** If triggered by a code push (usually when a Pull Request is merged): no tests are run, but a terraform plan is executed followed by a deployment if it succeeds.
+** If triggered by a cron (usually daily), then both tests (see below) and terraform plan are executed, but no deployment are done. Please note that in this case, if the plan detects any change, then the build fails because a configuration drift happened.
+** If triggered manually then no tests are run at all, a terraform plan is executed on the production and a human must approve the pipeline for the deployment to production to happen
+* When a build starts on a Pull Request, then the tests are run AND a terraform plan is executed to give the maintainers an idea of what should happen if the Pull Request would be merged
+
+
+The function `terraform()` is defined in https://github.com/jenkins-infra/pipeline-library/blob/master/vars/terraform.groovy and can have the following arguments:
+
+* `stagingCredentials`: (Optional - Default: "[]") list of Jenkins secrets to be used for the staging environment
+* `productionCredentials`: (Optional - Default: "[]") list of Jenkins secrets to be used for the *production* environment
+* `cronTriggerExpression`: (Optional - Default: "@daily") cron expression (as a string) to define when to trigger a build
+* `agentContainerImage`: (Optional - Default: "jenkinsciinfra/hashicorp-tools:<latest stable tag>") Docker image to use as agent,
+providing a reproductible environment (fixed versions of Terraform, tfsec, golang, etc.)
+* `runCommonTests`: (Optional - Default: true) Wether to execute the default (and common) test suite
+* `runTests`: (Optional - Default: false)Wether to execute custom tests provided by the current project by running the command `make --directory=./tests/` from the root of the project.
+
+**Example Usage:**
+
+[source,Jenkinsfile]
+----
+// Execute the terraform workflows in Jenkins
+terraform(
+	stagingCredentials: [
+		string(variable: 'AWS_ACCESS_KEY_ID', credentialsId: 'ci-terraform-aws-access-key'),
+		string(variable: 'AWS_SECRET_ACCESS_KEY', credentialsId:'ci-terraform-aws-secret-key'),
+		file(variable: 'BACKEND_CONFIG_FILE', credentialsId: 'ci-terraform-aws-backend-config'),
+	],
+	productionCredentials: [
+		string(variable: 'AWS_ACCESS_KEY_ID', credentialsId: 'production-terraform-aws-access-key'),
+		string(variable: 'AWS_SECRET_ACCESS_KEY', credentialsId:'production-terraform-aws-secret-key'),
+		file(variable: 'BACKEND_CONFIG_FILE', credentialsId: 'production-terraform-aws-backend-config'),
+	],
+)
+----
