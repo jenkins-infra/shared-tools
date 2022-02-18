@@ -19,8 +19,8 @@ sources:
     spec:
       owner: golang
       repository: go
-      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
-      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
       versionFilter:
         kind: regex
         pattern: 'go1\.(\d*)\.(\d*)$'
@@ -32,7 +32,7 @@ sources:
     depends_on:
       - latestGoVersion
     spec:
-      command: ./updatecli/scripts/updateGomodGoversion.sh ./tests/go.mod {{ source "latestGoVersion" }}
+      command: ./updatecli/scripts/updateGomodGoversion.sh ./terraform/tests/go.mod {{ source "latestGoVersion" }}
 
 targets:
   go.mod:
