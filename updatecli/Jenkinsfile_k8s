@@ -1,0 +1,37 @@
+
+if (env.BRANCH_NAME == 'main') {
+  properties([
+    buildDiscarder(logRotator(numToKeepStr: '10')),
+    // Daily build is enough: only the tagged build would generate downstream PRs on jenkins-infra
+    pipelineTriggers([cron('@daily')]),
+  ])
+}
+
+pipeline {
+  agent none
+  options {
+    // Average build time is ~30 min. 1 hour timeout indicates that something is wrong and should fail
+    timeout(time: 1, unit: 'HOURS')
+  }
+  stages {
+    stage('Side Tasks') {
+      // as I don't know yet what task will be done here, I keep the parallel for later use
+      parallel {
+        stage('Updatecli') {
+          steps {
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              script {
+                withCredentials([string(credentialsId: 'updatecli-github-token', variable: 'UPDATECLI_GITHUB_TOKEN')]) {
+                  updatecli(action: 'diff')
+                  if (env.BRANCH_NAME == 'main') {
+                    updatecli(action: 'apply', cronTriggerExpression: '@daily')
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
