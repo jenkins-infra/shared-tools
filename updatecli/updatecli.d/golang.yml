@@ -1,0 +1,54 @@
+title: Bump `shared-tools` golang version from go lastest release
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.user }}"
+      email: "{{ .github.email }}"
+      owner: "{{ .github.owner }}"
+      repository: "{{ .github.repository }}"
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      branch: "{{ .github.branch }}"
+
+sources:
+  latestGoVersion:
+    name: Get Latest Go Release
+    kind: githubRelease
+    spec:
+      owner: golang
+      repository: go
+      token: '{{ requiredEnv "UPDATECLI_GITHUB_TOKEN" }}'
+      username: '{{ requiredEnv "UPDATECLI_GITHUB_ACTOR" }}'
+      versionFilter:
+        kind: regex
+        pattern: 'go1\.(\d*)\.(\d*)$'
+    transformers:
+      - trimPrefix: go
+  gomod:
+    name: Update go.mod
+    kind: shell
+    depends_on:
+      - latestGoVersion
+    spec:
+      command: ./updatecli/scripts/updateGomodGoversion.sh ./tests/go.mod {{ source "latestGoVersion" }}
+
+targets:
+  go.mod:
+    name: '[go.mod] Update Golang version to {{ source "latestGoVersion" }}'
+    sourceID: gomod
+    kind: file
+    spec:
+      file: go.mod
+    scmID: default
+
+pullrequests:
+  default:
+    kind: github
+    scmID: default
+    targets:
+      - go.mod
+    spec:
+      labels:
+        - dependencies
