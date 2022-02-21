@@ -32,7 +32,7 @@ sources:
     depends_on:
       - latestGoVersion
     spec:
-      command: ./updatecli/scripts/updateGomodGoversion.sh ./terraform/tests/go.mod {{ source "latestGoVersion" }}
+      command: bash ./updatecli/scripts/updateGomodGoversion.sh ./terraform/tests/go.mod {{ source "latestGoVersion" }}
 
 targets:
   go.mod:
