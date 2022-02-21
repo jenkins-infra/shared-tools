@@ -14,18 +14,18 @@ scms:
 
 sources:
   latestGoVersion:
-    name: Get Latest Go Release
     kind: githubRelease
+    name: Get the latest Golang version
     spec:
-      owner: golang
-      repository: go
+      owner: "golang"
+      repository: "go"
       token: "{{ requiredEnv .github.token }}"
       username: "{{ .github.username }}"
       versionFilter:
         kind: regex
         pattern: 'go1\.(\d*)\.(\d*)$'
     transformers:
-      - trimPrefix: go
+      - trimPrefix: "go"
   gomod:
     name: Update go.mod
     kind: shell
@@ -40,7 +40,7 @@ targets:
     sourceID: gomod
     kind: file
     spec:
-      file: go.mod
+      file: ./terraform/tests/go.mod
     scmID: default
 
 pullrequests:
