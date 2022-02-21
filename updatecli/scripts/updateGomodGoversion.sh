@@ -17,15 +17,10 @@ tmp_dir="$(mktemp -d)"
 {
   if ! command -v go
   then
-    curl --silent --show-error --location --output "${tmp_dir}/go.tgz" \
-      "https://golang.org/dl/go${go_version}.$(uname -s | tr '[:upper:]' '[:lower:]')-amd64.tar.gz"
-    mkdir -p "${tmp_dir}/.bin"
-    tar xzf "${tmp_dir}/go.tgz" -C "${tmp_dir}/.bin"
-    export PATH="${PATH}":"${tmp_dir}"/.bin/go/bin
+    echo "NO GO INSTALLED"
+    exit 1
   fi
-
-  command -v go
-  go version
+  echo "using go version: $(go version)"
 } >&2
 
 ## Copies go mod's directory to a temp directory an starts working from this temp. dir.
