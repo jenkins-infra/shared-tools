@@ -32,7 +32,7 @@ export GOPATH
 ## Updates go mod properly
 go mod edit -go="${new_version}" >&2
 go mod tidy >&2
-echo "" >> go.mod ## Ad empty endline to be POSIX compliant
+echo "" >> go.mod # Add empty endline to be POSIX compliant
 
 ## Shows new go mod
 cat go.mod
