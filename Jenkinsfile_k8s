@@ -14,14 +14,14 @@ pipeline {
     stage('Updatecli DIFF') {
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-          updatecli(action: 'diff', updatecliDockerImage: "${dockerImage}")
+          updatecli(action: 'diff', updatecliDockerImage: dockerImage)
         }
       }
     }
     stage('Updatecli APPLY') {
       when { branch 'main' }
       steps {
-        updatecli(action: 'apply', cronTriggerExpression: '@daily', updatecliDockerImage: "${dockerImage}")
+        updatecli(action: 'apply', cronTriggerExpression: '@daily', updatecliDockerImage: dockerImage)
       }
     }
   }
