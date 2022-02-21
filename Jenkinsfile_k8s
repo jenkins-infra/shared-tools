@@ -1,4 +1,4 @@
-def dockerImage = "jenkinsciinfra/hashicorp-tools:0.3.7" //keep version uptodate
+def dockerImage = 'jenkinsciinfra/hashicorp-tools:0.3.7' //keep version uptodate
 
 pipeline {
   agent none
