@@ -25,6 +25,8 @@ tmp_dir="$(mktemp -d)"
   fi
 
   command -v go
+  cat /etc/*release*
+  ldd $(which go)
   go version
 } >&2
 
