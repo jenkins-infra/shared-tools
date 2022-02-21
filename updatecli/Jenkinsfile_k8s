@@ -1,4 +1,3 @@
-
 if (env.BRANCH_NAME == 'main') {
   properties([
     buildDiscarder(logRotator(numToKeepStr: '10')),
