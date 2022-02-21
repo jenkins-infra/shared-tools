@@ -1,0 +1,54 @@
+title: Bump `shared-tools` golang version from go lastest release
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.user }}"
+      email: "{{ .github.email }}"
+      owner: "{{ .github.owner }}"
+      repository: "{{ .github.repository }}"
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      branch: "{{ .github.branch }}"
+
+sources:
+  latestGoVersion:
+    kind: githubRelease
+    name: Get the latest Golang version
+    spec:
+      owner: "golang"
+      repository: "go"
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      versionFilter:
+        kind: regex
+        pattern: 'go1\.(\d*)\.(\d*)$'
+    transformers:
+      - trimPrefix: "go"
+  gomod:
+    name: Update go.mod
+    kind: shell
+    depends_on:
+      - latestGoVersion
+    spec:
+      command: bash ./updatecli/scripts/updateGomodGoversion.sh ./terraform/tests/go.mod {{ source "latestGoVersion" }}
+
+targets:
+  go.mod:
+    name: '[go.mod] Update Golang version to {{ source "latestGoVersion" }}'
+    sourceID: gomod
+    kind: file
+    spec:
+      file: ./terraform/tests/go.mod
+    scmID: default
+
+pullrequests:
+  default:
+    kind: github
+    scmID: default
+    targets:
+      - go.mod
+    spec:
+      labels:
+        - dependencies
