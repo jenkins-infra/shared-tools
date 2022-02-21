@@ -14,18 +14,15 @@ pipeline {
   }
   stages {
     stage('Side Tasks') {
-      // as I don't know yet what task will be done here, I keep the parallel for later use
-      parallel {
-        stage('Updatecli') {
-          steps {
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-              script {
-                withCredentials([string(credentialsId: 'updatecli-github-token', variable: 'UPDATECLI_GITHUB_TOKEN')]) {
-                  updatecli(action: 'diff')
-                  if (env.BRANCH_NAME == 'main') {
-                    updatecli(action: 'apply', cronTriggerExpression: '@daily')
-                  }
-                }
+      stage('Updatecli') {
+        environment{
+          UPDATECLI_GITHUB_TOKEN = credentials('updatecli-github-token')
+        }
+        steps {
+          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+              updatecli(action: 'diff')
+              if (env.BRANCH_NAME == 'main') {
+                updatecli(action: 'apply', cronTriggerExpression: '@daily')
               }
             }
           }
