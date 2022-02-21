@@ -35,7 +35,7 @@ targets:
     kind: file
     spec:
       file: ./Jenkinsfile_k8s
-      # Please note that the patterns are specified as "block scalars" (>) with the last endline trimmed (-) to avoid tedious escaping of simple quotes
+      # Please note that the patterns are specified as "block scalars" (>) - https://yaml-multiline.info/ - with the last endline trimmed (-) to avoid tedious escaping of simple quotes
       matchpattern: >-
         'jenkinsciinfra/hashicorp-tools:(.*)'
       replacepattern: >-
