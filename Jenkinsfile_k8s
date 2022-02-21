@@ -3,8 +3,7 @@ def dockerImage = 'jenkinsciinfra/hashicorp-tools:0.3.7' // Tracked by updatecli
 pipeline {
   agent none
   options {
-    // Average build time is ~30 min. 1 hour timeout indicates that something is wrong and should fail
-    timeout(time: 1, unit: 'HOURS')
+    timeout(time: 10, unit: 'MINUTES')
     buildDiscarder(logRotator(numToKeepStr: '10'))
   }
   environment{
