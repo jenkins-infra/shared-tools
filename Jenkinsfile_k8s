@@ -12,14 +12,14 @@ pipeline {
     stage('Updatecli DIFF') {
       steps {
         catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-          updatecli(action: 'diff')
+          updatecli(action: 'diff', updatecliDockerImage: 'jenkinsciinfra/hashicorp-tools:0.3.7') //keep version uptodate
         }
       }
     }
     stage('Updatecli APPLY') {
       when { branch 'main' }
       steps {
-        updatecli(action: 'apply', cronTriggerExpression: '@daily')
+        updatecli(action: 'apply', cronTriggerExpression: '@daily', updatecliDockerImage: 'jenkinsciinfra/hashicorp-tools:0.3.7') //keep version uptodate
       }
     }
   }
