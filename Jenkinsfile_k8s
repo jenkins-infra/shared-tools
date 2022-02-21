@@ -13,17 +13,15 @@ pipeline {
     timeout(time: 1, unit: 'HOURS')
   }
   stages {
-    stage('Side Tasks') {
-      stage('Updatecli') {
-        environment{
-          UPDATECLI_GITHUB_TOKEN = credentials('updatecli-github-token')
-        }
-        steps {
-          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            updatecli(action: 'diff')
-            if (env.BRANCH_NAME == 'main') {
-              updatecli(action: 'apply', cronTriggerExpression: '@daily')
-            }
+    stage('Updatecli') {
+      environment{
+        UPDATECLI_GITHUB_TOKEN = credentials('updatecli-github-token')
+      }
+      steps {
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          updatecli(action: 'diff')
+          if (env.BRANCH_NAME == 'main') {
+            updatecli(action: 'apply', cronTriggerExpression: '@daily')
           }
         }
       }
