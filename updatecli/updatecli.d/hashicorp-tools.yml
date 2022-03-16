@@ -20,9 +20,21 @@ sources:
       repository: "docker-hashicorp-tools"
       token: "{{ requiredEnv .github.token }}"
       username: "{{ .github.username }}"
+  terraformHashicorpToolsVersion:
+    depends_on:
+      - dockerHashicorpToolsImageVersion
+    kind: file
+    spec:
+      file: "https://raw.githubusercontent.com/jenkins-infra/docker-hashicorp-tools/0.4.4/Dockerfile"
+      matchPattern: 'ARG TERRAFORM_VERSION=(.*)'
+    transformers:
+      - findSubMatch:
+          pattern: 'ARG TERRAFORM_VERSION=(.*)'
+          captureIndex: 1
 
 conditions:
-  checkIfDockerImageIsPublished:
+  checkIfDockerImageIsPublished: 
+    sourceID: "dockerHashicorpToolsImageVersion"
     name: "Check if the Docker Image is published"
     kind: dockerImage
     spec:
@@ -31,6 +43,7 @@ conditions:
 
 targets:
   updateJenkinsFile:
+    sourceID: "dockerHashicorpToolsImageVersion"
     name: Update Jenkinsfile in groovy code
     kind: file
     spec:
@@ -41,6 +54,14 @@ targets:
       replacepattern: >-
         'jenkinsciinfra/hashicorp-tools:{{ source `dockerHashicorpToolsImageVersion` }}'
     scmID: default
+  updateReadme:
+    sourceID: "terraformHashicorpToolsVersion"
+    name: Update Readme.adoc file
+    kind: file
+    spec:
+      file: ./terraform/README.adoc
+      matchpattern: 'Terraform version (.*) CLI'
+      replacepattern: 'Terraform version {{ source `terraformHashicorpToolsVersion` }} CLI'
 
 pullrequests:
   default:
@@ -48,6 +69,8 @@ pullrequests:
     scmID: default
     targets:
       - updateJenkinsFile
+      - updateReadme
     spec:
       labels:
         - dependencies
+        - HashicorpTools
