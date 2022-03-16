@@ -25,7 +25,7 @@ sources:
       - dockerHashicorpToolsImageVersion
     kind: file
     spec:
-      file: https://raw.githubusercontent.com/jenkins-infra/docker-hashicorp-tools/{{ source `dockerHashicorpToolsImageVersion` }}/Dockerfile
+      file: 'https://raw.githubusercontent.com/jenkins-infra/docker-hashicorp-tools/{{ source `dockerHashicorpToolsImageVersion` }}/Dockerfile'
       matchPattern: 'ARG TERRAFORM_VERSION=(.*)'
     transformers:
       - findSubMatch:
