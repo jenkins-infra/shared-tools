@@ -18,7 +18,7 @@ validate: lint $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Va
 	@cd $(TERRAFORM_PROJECT_DIR) && tfsec --exclude-downloaded-modules
 
 lint: ## Lint the project files
-	@cd $(TERRAFORM_PROJECT_DIR) && terraform fmt -recursive -check
+	@cd $(TERRAFORM_PROJECT_DIR) && terraform fmt -recursive -check || echo "Error: please run the command 'terraform fmt -recursive' to format the file(s) above."
 
 # tests: .terraform/plugins/selections.json ## Execute the test harness
 common-tests: $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Execute the "common" test harness from the
