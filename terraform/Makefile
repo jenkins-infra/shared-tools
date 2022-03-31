@@ -25,7 +25,7 @@ common-tests: $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Exe
 	@cd $(CURDIR)/tests/ && go mod download && go test -v -timeout 30m
 
 plan: lint $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Write the planned changes into $(PLAN_FILE_NAME) (but do NOT apply them)
-	@cd $(TERRAFORM_PROJECT_DIR) && terraform plan -compact-warnings -lock=false -out=tfplan > /dev/null 2>&1
+	@cd $(TERRAFORM_PROJECT_DIR) && terraform plan -compact-warnings -lock=false -out=tfplan &> /dev/null
 	@cd $(TERRAFORM_PROJECT_DIR) && terraform show -no-color tfplan > $(TERRAFORM_PROJECT_DIR)/$(PLAN_FILE_NAME)
 	@echo "Terraform plan output can be checked under the file ./$(PLAN_FILE_NAME)"
 
