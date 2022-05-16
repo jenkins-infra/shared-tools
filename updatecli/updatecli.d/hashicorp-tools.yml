@@ -62,6 +62,7 @@ targets:
       file: ./terraform/README.adoc
       matchpattern: 'Terraform version (.*) CLI'
       replacepattern: 'Terraform version {{ source `terraformHashicorpToolsVersion` }} CLI'
+    scmid: default
 
 pullrequests:
   default:
