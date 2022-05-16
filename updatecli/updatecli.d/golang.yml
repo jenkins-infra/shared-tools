@@ -1,4 +1,4 @@
-title: Bump `shared-tools` golang version from go lastest release
+title: Bump `shared-tools` golang version
 
 scms:
   default:
@@ -14,18 +14,18 @@ scms:
 
 sources:
   latestGoVersion:
-    kind: githubRelease
+    kind: githubrelease
     name: Get the latest Golang version
     spec:
       owner: "golang"
       repository: "go"
       token: "{{ requiredEnv .github.token }}"
       username: "{{ .github.username }}"
-      versionFilter:
+      versionfilter:
         kind: regex
         pattern: 'go1\.(\d*)\.(\d*)$'
     transformers:
-      - trimPrefix: "go"
+      - trimprefix: "go"
   gomod:
     name: Update go.mod
     kind: shell
@@ -37,16 +37,16 @@ sources:
 targets:
   go.mod:
     name: '[go.mod] Update Golang version to {{ source "latestGoVersion" }}'
-    sourceID: gomod
+    sourceid: gomod
     kind: file
     spec:
       file: ./terraform/tests/go.mod
-    scmID: default
+    scmid: default
 
 pullrequests:
   default:
     kind: github
-    scmID: default
+    scmid: default
     targets:
       - go.mod
     spec:
