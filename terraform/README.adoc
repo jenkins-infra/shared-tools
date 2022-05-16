@@ -5,7 +5,7 @@ This directory holds the reusable tooling for terraform-managed resources for th
 == Requirements
 
 * The following tools (you may check the Docker image used by the CI at https://github.com/jenkins-infra/docker-hashicorp-tools with the up-to-date requirements):
-** Terraform version 1.0.11 CLI to provision the infrastructure
+** Terraform version 1.1.9 CLI to provision the infrastructure
 ** GNU `make` to ease running the tasks involved in this provisioning
 ** link:https://github.com/tfsec/tfsec[tfsec]
 ** link:https://golang.org/[Golang] to allow testing with link:https://terratest.gruntwork.io/[terratest]
