@@ -11,7 +11,7 @@ help: ## Show this Makefile's help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 prepare: ## Prepare Terraform's environment by downloading and initializing its plugins and backends
-	make --directory=$(TERRAFORM_PROJECT_DIR) .terraform/plugins/selections.json
+	make --directory=$(CURDIR) $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json
 
 validate: lint $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Validate the terraform files of the current project. Might executes "make prepare" if required.
 	@cd $(TERRAFORM_PROJECT_DIR) && terraform validate
