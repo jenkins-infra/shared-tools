@@ -1,4 +1,4 @@
-title: Bump `shared-tools` golang version
+name: Bump `shared-tools` golang version
 
 scms:
   default:
@@ -29,7 +29,7 @@ sources:
   gomod:
     name: Update go.mod
     kind: shell
-    depends_on:
+    dependson:
       - latestGoVersion
     spec:
       command: bash ./updatecli/scripts/updateGomodGoversion.sh ./terraform/tests/go.mod {{ source "latestGoVersion" }}
@@ -45,12 +45,12 @@ targets:
       file: ./terraform/tests/go.mod
     scmid: default
 
-pullrequests:
+actions:
   default:
-    kind: github
+    kind: github/pullrequest
+    title: Bump `shared-tools` golang version to {{ source "latestGoVersion" }}
     scmid: default
-    targets:
-      - go.mod
     spec:
       labels:
         - dependencies
+        - golang
