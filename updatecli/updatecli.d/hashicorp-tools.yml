@@ -1,4 +1,4 @@
-title: Bump `hashicorp-tools` docker image version
+name: Bump `hashicorp-tools` docker image version
 
 scms:
   default:
@@ -21,7 +21,7 @@ sources:
       token: "{{ requiredEnv .github.token }}"
       username: "{{ .github.username }}"
   terraformHashicorpToolsVersion:
-    depends_on:
+    dependson:
       - dockerHashicorpToolsImageVersion
     kind: file
     spec:
@@ -64,13 +64,11 @@ targets:
       replacepattern: 'Terraform version {{ source `terraformHashicorpToolsVersion` }} CLI'
     scmid: default
 
-pullrequests:
+actions:
   default:
-    kind: github
+    kind: github/pullrequest
     scmid: default
-    targets:
-      - updateJenkinsFile
-      - updateReadme
+    title: Bump `hashicorp-tools` docker image version to {{ source "dockerHashicorpToolsImageVersion" }}
     spec:
       labels:
         - dependencies
