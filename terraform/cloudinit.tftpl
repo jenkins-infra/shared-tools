@@ -14,9 +14,10 @@ write_files:
 runcmd:
   - [ mkdir, -p, /run/puppetinstall ]
   - [ wget, "https://apt.puppetlabs.com/puppet6-release-focal.deb", -O, /run/puppetinstall/puppet6-release-focal.deb ]
+  - [ locale-gen, en_US.UTF-8 ]
   - [ dpkg, -i, /run/puppetinstall/puppet6-release-focal.deb ]
   - [ apt-get, update, -y ]
-  - [ apt-get, install, "puppet-agent=6.*", --yes, --quiet, --no-install-recommends ]
+  - [ apt-get, install, "puppet-agent=6.*", cron, --yes, --quiet, --no-install-recommends ]
   # see above comment in the "write_files" section
   - [ mv, /run/puppetinstall/puppet.conf, /etc/puppetlabs/puppet/puppet.conf]
   - [ systemctl, enable, puppet ]
