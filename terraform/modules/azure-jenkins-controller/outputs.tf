@@ -11,17 +11,13 @@ output "controller_private_ipv4" {
 }
 
 output "controller_public_fqdn" {
-  value = azurerm_dns_a_record.controller.fqdn
+  value = var.is_public ? azurerm_dns_a_record.controller[0].fqdn : var.service_fqdn
 }
 
 output "controller_private_fqdn" {
-  value = var.is_public ? azurerm_dns_a_record.private_controller[0].fqdn : azurerm_dns_a_record.controller.fqdn
-}
-
-output "service_short_hostname" {
-  value = var.controller_short_hostname
+  value = var.is_public ? azurerm_dns_a_record.private_controller[0].fqdn : var.service_fqdn
 }
 
 output "service_fqdn" {
-  value = local.service_fqdn
+  value = var.service_fqdn
 }

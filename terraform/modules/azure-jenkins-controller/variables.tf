@@ -1,5 +1,5 @@
 # Required variables
-variable "controller_short_hostname" {
+variable "service_fqdn" {
   type = string
 }
 
@@ -12,14 +12,6 @@ variable "admin_ssh_publickey" {
 }
 
 variable "location" {
-  type = string
-}
-
-variable "dns_zone_name" {
-  type = string
-}
-
-variable "dns_resourcegroup_name" {
   type = string
 }
 
@@ -41,9 +33,19 @@ variable "is_public" {
   default = false
 }
 
-variable "controller_base_domain" {
+variable "dns_zone_name" {
+  type    = string
+  default = ""
+}
+
+variable "dns_zone" {
   type    = string
   default = "jenkins.io"
+}
+
+variable "dns_resourcegroup_name" {
+  type    = string
+  default = ""
 }
 
 variable "default_tags" {
@@ -68,11 +70,6 @@ variable "controller_os_disk_type" {
 
 ## TODO: backward compatibility variables to be removed (implies renaming resources)
 variable "controller_resourcegroup_name" {
-  type    = string
-  default = ""
-}
-
-variable "controller_vm_name" {
   type    = string
   default = ""
 }

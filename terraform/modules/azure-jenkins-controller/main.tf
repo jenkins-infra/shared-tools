@@ -2,7 +2,7 @@
 ## Resources for the Controller VM
 ####################################################################################
 resource "azurerm_resource_group" "controller" {
-  name     = var.controller_resourcegroup_name == "" ? "${local.controller_name}-controller" : var.controller_resourcegroup_name
+  name     = var.controller_resourcegroup_name == "" ? "${local.service_stripped_name}-controller" : var.controller_resourcegroup_name
   location = var.location
   tags     = var.default_tags
 }
@@ -17,23 +17,23 @@ resource "azurerm_public_ip" "controller" {
 }
 resource "azurerm_management_lock" "controller_publicip" {
   count      = var.is_public ? 1 : 0
-  name       = "${local.controller_name}-controller-publicip"
+  name       = "${local.service_stripped_name}-controller-publicip"
   scope      = azurerm_public_ip.controller[0].id
   lock_level = "CanNotDelete"
   notes      = "Locked because this is a sensitive resource that should not be removed"
 }
 resource "azurerm_dns_a_record" "controller" {
-  name                = trimsuffix(local.controller_fqdn, ".jenkins.io")
+  count               = var.is_public ? 1 : 0
+  name                = trimsuffix(trimsuffix(local.controller_fqdn, var.dns_zone), ".")
   zone_name           = var.dns_zone_name
   resource_group_name = var.dns_resourcegroup_name
   ttl                 = 60
-  records             = [var.is_public ? azurerm_public_ip.controller[0].ip_address : azurerm_network_interface.controller.private_ip_address]
+  records             = [azurerm_public_ip.controller[0].ip_address]
   tags                = var.default_tags
 }
-# Only needed for private SSH access when there is a public access for HTTP
 resource "azurerm_dns_a_record" "private_controller" {
   count               = var.is_public ? 1 : 0
-  name                = "private.${trimsuffix(azurerm_public_ip.controller[0].name, ".jenkins.io")}"
+  name                = "private.${azurerm_dns_a_record.controller[0].name}"
   zone_name           = var.dns_zone_name
   resource_group_name = var.dns_resourcegroup_name
   ttl                 = 60
@@ -64,7 +64,7 @@ resource "azurerm_managed_disk" "controller_data" {
   tags = var.default_tags
 }
 resource "azurerm_linux_virtual_machine" "controller" {
-  name                            = var.controller_vm_name == "" ? "${local.controller_fqdn}" : var.controller_vm_name
+  name                            = local.controller_fqdn
   resource_group_name             = azurerm_resource_group.controller.name
   location                        = azurerm_resource_group.controller.location
   tags                            = var.default_tags

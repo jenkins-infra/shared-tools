@@ -1,5 +1,4 @@
 locals {
-  service_fqdn    = "${var.controller_short_hostname}.${var.controller_base_domain}"
-  controller_fqdn = "controller.${local.service_fqdn}"
-  controller_name = replace(local.service_fqdn, ".", "-")
+  service_stripped_name = replace(var.service_fqdn, ".", "-")
+  controller_fqdn       = "controller.${var.service_fqdn}"
 }
