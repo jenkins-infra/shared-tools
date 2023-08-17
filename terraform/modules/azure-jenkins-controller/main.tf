@@ -105,3 +105,118 @@ resource "azurerm_virtual_machine_data_disk_attachment" "controller_data" {
   lun                = "10"
   caching            = "ReadWrite"
 }
+
+####################################################################################
+## Network Security Group and rules
+####################################################################################
+resource "azurerm_network_security_group" "controller" {
+  name                = local.controller_fqdn
+  location            = var.location
+  resource_group_name = azurerm_resource_group.controller.name
+  tags                = var.default_tags
+}
+resource "azurerm_subnet_network_security_group_association" "controller" {
+  subnet_id                 = var.controller_subnet_id
+  network_security_group_id = azurerm_network_security_group.controller.id
+}
+
+## Outbound Rules (different set of priorities than Inbound rules) ##
+# Ignore the rule as it does not detect the IP restriction to only ldap.jenkins.io"s host
+#tfsec:ignore:azure-network-no-public-egress
+resource "azurerm_network_security_rule" "allow_outbound_ldap_from_controller_to_jenkinsldap" {
+  name                        = "allow-outbound-ldap-from-${local.service_short_stripped_name}-controller-to-jenkinsldap"
+  priority                    = 4086
+  direction                   = "Outbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  source_address_prefix       = azurerm_linux_virtual_machine.controller.private_ip_address
+  destination_port_range      = "636" # LDAP over TLS
+  destination_address_prefix  = var.jenkins_infra_ips.ldap_ipv4
+  resource_group_name         = azurerm_resource_group.controller.name
+  network_security_group_name = azurerm_network_security_group.controller.name
+}
+# Ignore the rule as it does not detect the IP restriction to only puppet.jenkins.io"s host
+#tfsec:ignore:azure-network-no-public-egress
+resource "azurerm_network_security_rule" "allow_outbound_puppet_from_controller_to_puppetmaster" {
+  name                        = "allow-outbound-puppet-from-${local.service_short_stripped_name}-controller-to-puppetmaster"
+  priority                    = 4087
+  direction                   = "Outbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  source_address_prefix       = azurerm_linux_virtual_machine.controller.private_ip_address
+  destination_port_range      = "8140" # Puppet over TLS
+  destination_address_prefix  = var.jenkins_infra_ips.puppet_ipv4
+  resource_group_name         = azurerm_resource_group.controller.name
+  network_security_group_name = azurerm_network_security_group.controller.name
+}
+resource "azurerm_network_security_rule" "allow_outbound_http_from_controller_to_internet" {
+  name                        = "allow-outbound-http-from-${local.service_short_stripped_name}-controller-to-internet"
+  priority                    = 4089
+  direction                   = "Outbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  source_address_prefix       = azurerm_linux_virtual_machine.controller.private_ip_address
+  destination_port_ranges     = ["80", "443"]
+  destination_address_prefix  = "Internet"
+  resource_group_name         = azurerm_resource_group.controller.name
+  network_security_group_name = azurerm_network_security_group.controller.name
+}
+# This rule overrides an Azure-Default rule. its priority must be < 65000.
+resource "azurerm_network_security_rule" "deny_all_outbound_from_controller_subnet" {
+  name                        = "deny-all-outbound-from-${local.service_short_stripped_name}-controller"
+  priority                    = 4096 # Maximum value allowed by the provider
+  direction                   = "Outbound"
+  access                      = "Deny"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = azurerm_linux_virtual_machine.controller.private_ip_address
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.controller.name
+  network_security_group_name = azurerm_network_security_group.controller.name
+}
+
+## Inbound Rules (different set of priorities than Outbound rules) ##
+#tfsec:ignore:azure-network-no-public-ingress
+resource "azurerm_network_security_rule" "allow_inbound_jenkins_to_controller" {
+  name                  = "allow-inbound-jenkins-to-${local.service_short_stripped_name}-controller"
+  priority              = 4080
+  direction             = "Inbound"
+  access                = "Allow"
+  protocol              = "Tcp"
+  source_port_range     = "*"
+  source_address_prefix = var.is_public ? "*" : "VirtualNetwork"
+  destination_port_ranges = [
+    "80",    # HTTP (for redirections to HTTPS)
+    "443",   # HTTPS
+    "50000", # Direct TCP Inbound protocol
+  ]
+  destination_address_prefixes = compact([
+    azurerm_linux_virtual_machine.controller.private_ip_address,
+    var.is_public ? azurerm_public_ip.controller[0].ip_address : "",
+  ])
+  resource_group_name         = azurerm_resource_group.controller.name
+  network_security_group_name = azurerm_network_security_group.controller.name
+}
+
+# This rule overrides an Azure-Default rule. its priority must be < 65000
+# Please note that Azure NSG default to "deny all inbound from Internet"
+resource "azurerm_network_security_rule" "deny_all_inbound_to_controller" {
+  name                   = "deny-all-inbound-to-${local.service_short_stripped_name}-controller"
+  priority               = 4090 # Maximum value allowed by the Azure Terraform Provider is 4096
+  direction              = "Inbound"
+  access                 = "Deny"
+  protocol               = "*"
+  source_port_range      = "*"
+  destination_port_range = "*"
+  source_address_prefix  = "*"
+  destination_address_prefixes = compact([
+    azurerm_linux_virtual_machine.controller.private_ip_address,
+    var.is_public ? azurerm_public_ip.controller[0].ip_address : "",
+  ])
+  resource_group_name         = azurerm_resource_group.controller.name
+  network_security_group_name = azurerm_network_security_group.controller.name
+}

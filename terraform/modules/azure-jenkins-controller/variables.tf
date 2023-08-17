@@ -68,6 +68,13 @@ variable "controller_os_disk_type" {
   default = "StandardSSD_LRS"
 }
 
+variable "jenkins_infra_ips" {
+  type = object({
+    ldap_ipv4   = string
+    puppet_ipv4 = string
+  })
+}
+
 ## TODO: backward compatibility variables to be removed (implies renaming resources)
 variable "controller_resourcegroup_name" {
   type    = string

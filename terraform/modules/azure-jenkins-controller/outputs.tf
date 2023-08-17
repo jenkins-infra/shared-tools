@@ -21,3 +21,11 @@ output "controller_private_fqdn" {
 output "service_fqdn" {
   value = var.service_fqdn
 }
+
+output "controller_nsg_name" {
+  value = azurerm_network_security_group.controller.name
+}
+
+output "controller_nsg_id" {
+  value = azurerm_network_security_group.controller.id
+}
