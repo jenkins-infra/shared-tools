@@ -15,7 +15,19 @@ variable "location" {
   type = string
 }
 
-variable "controller_subnet_id" {
+variable "controller_network_name" {
+  type = string
+}
+
+variable "controller_network_rg_name" {
+  type = string
+}
+
+variable "controller_subnet_name" {
+  type = string
+}
+
+variable "ephemeral_agents_subnet_name" {
   type = string
 }
 
@@ -27,7 +39,15 @@ variable "controller_vm_size" {
   type = string
 }
 
-# Optionals variables
+variable "controller_service_principal_ids" {
+  type = list(string)
+}
+
+variable "controller_service_principal_end_date" {
+  type = string
+}
+
+### Optionals variables
 variable "is_public" {
   type    = bool
   default = false
@@ -70,13 +90,29 @@ variable "controller_os_disk_type" {
 
 variable "jenkins_infra_ips" {
   type = object({
-    ldap_ipv4   = string
-    puppet_ipv4 = string
+    ldap_ipv4           = string
+    puppet_ipv4         = string
+    gpg_keyserver_ipv4s = list(string)
   })
+}
+
+variable "controller_active_directory_url" {
+  type    = string
+  default = "https://github.com/jenkins-infra/azure"
+}
+
+variable "controller_packer_rg_ids" {
+  type    = list(string)
+  default = []
 }
 
 ## TODO: backward compatibility variables to be removed (implies renaming resources)
 variable "controller_resourcegroup_name" {
+  type    = string
+  default = ""
+}
+
+variable "ephemeral_agents_resourcegroup_name" {
   type    = string
   default = ""
 }
