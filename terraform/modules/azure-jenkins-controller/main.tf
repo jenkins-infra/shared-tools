@@ -383,8 +383,8 @@ resource "azurerm_network_security_rule" "deny_all_outbound_from_ephemeral_agent
 ## Inbound Rules (different set of priorities than Outbound rules) ##
 resource "azurerm_network_security_rule" "allow_inbound_ssh_from_controller_to_ephemeral_agents" {
   name                         = "allow-inbound-ssh-from-${local.service_short_stripped_name}-controller-to-ephemeral-agents"
-  priority                     = 4085
-  direction                    = "Outbound"
+  priority                     = 4090
+  direction                    = "Inbound"
   access                       = "Allow"
   protocol                     = "Tcp"
   source_port_range            = "*"
