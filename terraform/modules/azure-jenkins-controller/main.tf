@@ -462,9 +462,26 @@ resource "azurerm_role_definition" "controller_vnet_reader" {
     actions = ["Microsoft.Network/virtualNetworks/read"]
   }
 }
-resource "azurerm_role_assignment" "controller_io_read_publicvnet_subnets" {
+resource "azurerm_role_assignment" "controller_vnet_reader" {
   scope              = data.azurerm_virtual_network.controller.id
   role_definition_id = azurerm_role_definition.controller_vnet_reader.role_definition_resource_id
+  principal_id       = azuread_service_principal.controller.id
+}
+
+resource "azurerm_role_definition" "ephemeral_agents_aci_contributor" {
+  name  = "${local.service_short_stripped_name}-ACI-Contributor"
+  scope = azurerm_resource_group.ephemeral_agents.id
+
+  permissions {
+    actions = [
+      # https://learn.microsoft.com/en-us/azure/role-based-access-control/resource-provider-operations#microsoftcontainerinstance
+      "Microsoft.ContainerInstance/containerGroups/*",
+    ]
+  }
+}
+resource "azurerm_role_assignment" "controller_ephemeral_agents_aci_contributor" {
+  scope              = azurerm_resource_group.ephemeral_agents.id
+  role_definition_id = azurerm_role_definition.ephemeral_agents_aci_contributor.role_definition_resource_id
   principal_id       = azuread_service_principal.controller.id
 }
 
