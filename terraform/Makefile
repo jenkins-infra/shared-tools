@@ -22,7 +22,7 @@ lint: ## Lint the project files
 
 # tests: .terraform/plugins/selections.json ## Execute the test harness
 common-tests: $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Execute the "common" test harness from the
-	@cd $(CURDIR)/tests/ && go mod download && go test -v -timeout 30m
+	@cd $(CURDIR)/tests/ && go mod download && go test -timeout 30m
 
 plan: lint $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Write the planned changes into $(PLAN_FILE_NAME) (but do NOT apply them)
 	@cd $(TERRAFORM_PROJECT_DIR) && terraform plan -compact-warnings -lock=false -no-color > $(TERRAFORM_PROJECT_DIR)/$(PLAN_FILE_NAME)
