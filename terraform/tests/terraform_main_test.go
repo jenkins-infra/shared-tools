@@ -10,7 +10,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
-func TestTerraformEksCluster(t *testing.T) {
+func TestTerraformCluster(t *testing.T) {
 
 	// Construct the terraform options with default retryable errors to handle the most common
 	// retryable errors in terraform testing.
