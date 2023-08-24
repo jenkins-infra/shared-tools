@@ -93,6 +93,7 @@ variable "jenkins_infra_ips" {
     ldap_ipv4           = string
     puppet_ipv4         = string
     gpg_keyserver_ipv4s = list(string)
+    privatevpn_subnet   = list(string)
   })
 }
 

@@ -215,6 +215,24 @@ resource "azurerm_network_security_rule" "deny_all_outbound_from_controller_subn
 }
 
 ## Inbound Rules (different set of priorities than Outbound rules) ##
+resource "azurerm_network_security_rule" "allow_inbound_ssh_from_privatevpn_to_controller" {
+  name                        = "allow-inbound-ssh-from-privatevpn-to-${local.service_short_stripped_name}-controller"
+  priority                    = 4085
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  resource_group_name         = azurerm_resource_group.controller.name
+  network_security_group_name = azurerm_network_security_group.controller.name
+  source_address_prefixes     = var.jenkins_infra_ips.privatevpn_subnet
+  destination_address_prefixes = compact([
+    azurerm_linux_virtual_machine.controller.private_ip_address,
+    var.is_public ? azurerm_public_ip.controller[0].ip_address : "",
+  ])
+
+}
+
 #tfsec:ignore:azure-network-no-public-ingress
 resource "azurerm_network_security_rule" "allow_inbound_jenkins_to_controller" {
   name                  = "allow-inbound-jenkins-to-${local.service_short_stripped_name}-controller"
@@ -381,6 +399,19 @@ resource "azurerm_network_security_rule" "deny_all_outbound_from_ephemeral_agent
 }
 
 ## Inbound Rules (different set of priorities than Outbound rules) ##
+resource "azurerm_network_security_rule" "allow_inbound_ssh_from_privatevpn_to_ephemeral_agents" {
+  name                        = "allow-inbound-ssh-from-privatevpn-to-${local.service_short_stripped_name}-ephemeral-agents"
+  priority                    = 4085
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefixes     = var.jenkins_infra_ips.privatevpn_subnet
+  destination_address_prefix  = "VirtualNetwork"
+  resource_group_name         = azurerm_network_security_group.ephemeral_agents.resource_group_name
+  network_security_group_name = azurerm_network_security_group.ephemeral_agents.name
+}
 resource "azurerm_network_security_rule" "allow_inbound_ssh_from_controller_to_ephemeral_agents" {
   name                         = "allow-inbound-ssh-from-${local.service_short_stripped_name}-controller-to-ephemeral-agents"
   priority                     = 4090
