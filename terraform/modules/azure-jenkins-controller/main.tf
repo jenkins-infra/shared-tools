@@ -157,7 +157,7 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_controller_to_
   network_security_group_name  = azurerm_network_security_group.controller.name
 }
 # Ignore the rule as it does not detect the IP restriction to only ldap.jenkins.io"s host
-#tfsec:ignore:azure-network-no-public-egress
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_ldap_from_controller_to_jenkinsldap" {
   name                        = "allow-outbound-ldap-from-${local.service_short_stripped_name}-controller-to-jenkinsldap"
   priority                    = 4086
@@ -172,7 +172,7 @@ resource "azurerm_network_security_rule" "allow_outbound_ldap_from_controller_to
   network_security_group_name = azurerm_network_security_group.controller.name
 }
 # Ignore the rule as it does not detect the IP restriction to only puppet.jenkins.io"s host
-#tfsec:ignore:azure-network-no-public-egress
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_puppet_from_controller_to_puppetmaster" {
   name                        = "allow-outbound-puppet-from-${local.service_short_stripped_name}-controller-to-puppetmaster"
   priority                    = 4087
@@ -233,7 +233,7 @@ resource "azurerm_network_security_rule" "allow_inbound_ssh_from_privatevpn_to_c
 
 }
 
-#tfsec:ignore:azure-network-no-public-ingress
+#trivy:ignore:azure-network-no-public-ingress
 resource "azurerm_network_security_rule" "allow_inbound_jenkins_to_controller" {
   name                  = "allow-inbound-jenkins-to-${local.service_short_stripped_name}-controller"
   priority              = 4080
@@ -286,7 +286,7 @@ resource "azurerm_subnet_network_security_group_association" "ephemeral_agents" 
   network_security_group_id = azurerm_network_security_group.ephemeral_agents.id
 }
 ## Outbound Rules (different set of priorities than Inbound rules) ##
-#tfsec:ignore:azure-network-no-public-egress
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_hkp_udp_from_ephemeral_agents_subnet_to_internet" {
   name                    = "allow-outbound-hkp-udp-from-${local.service_short_stripped_name}_ephemeral_agents-to-internet"
   priority                = 4090
@@ -302,7 +302,7 @@ resource "azurerm_network_security_rule" "allow_outbound_hkp_udp_from_ephemeral_
   resource_group_name          = azurerm_network_security_group.ephemeral_agents.resource_group_name
   network_security_group_name  = azurerm_network_security_group.ephemeral_agents.name
 }
-#tfsec:ignore:azure-network-no-public-egress
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_hkp_tcp_from_ephemeral_agents_subnet_to_internet" {
   name                    = "allow-outbound-hkp-tcp-from-${local.service_short_stripped_name}_ephemeral_agents-to-internet"
   priority                = 4091
@@ -333,7 +333,7 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_ephemeral_agen
   resource_group_name         = azurerm_network_security_group.ephemeral_agents.resource_group_name
   network_security_group_name = azurerm_network_security_group.ephemeral_agents.name
 }
-#tfsec:ignore:azure-network-no-public-egress
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_ephemeral_agents_to_controller" {
   name                    = "allow-outbound-jenkins-from-${local.service_short_stripped_name}-agents"
   priority                = 4093
