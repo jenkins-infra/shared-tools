@@ -15,7 +15,7 @@ prepare: ## Prepare Terraform's environment by downloading and initializing its 
 
 validate: lint $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Validate the terraform files of the current project. Might executes "make prepare" if required.
 	@cd $(TERRAFORM_PROJECT_DIR) && terraform validate
-	@if command -v trivy 2>&1 >/dev/null; then trivy config --tf-exclude-downloaded-modules $(TERRAFORM_PROJECT_DIR); else tfsec --exclude-downloaded-modules $(TERRAFORM_PROJECT_DIR); fi
+	@if command -v trivy 2>&1 >/dev/null; then trivy config --tf-exclude-downloaded-modules --skip-dirs=.terraform --exit-code=1 $(TERRAFORM_PROJECT_DIR); else tfsec --exclude-downloaded-modules $(TERRAFORM_PROJECT_DIR); fi
 
 lint: ## Lint the project files
 	@cd $(TERRAFORM_PROJECT_DIR) && terraform fmt -recursive -check || echo "Error: please run the command 'terraform fmt -recursive' to format the file(s) above."
