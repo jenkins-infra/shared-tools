@@ -1,4 +1,4 @@
-def dockerImage = 'jenkinsciinfra/hashicorp-tools:1.0.12' // Tracked by updatecli
+def dockerImage = 'jenkinsciinfra/hashicorp-tools:1.0.14' // Tracked by updatecli
 
 pipeline {
   agent none
