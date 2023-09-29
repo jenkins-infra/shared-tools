@@ -11,7 +11,6 @@ output "outbound_ips" {
   value = {
     "pkg.jenkins.io"              = ["52.202.51.185"],
     "trusted.ci.jenkins.io"       = ["104.209.128.236"],
-    "phoenix.archives.jenkins.io" = ["129.146.98.132"],
   }
 }
 
