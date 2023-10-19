@@ -1,7 +1,7 @@
 output "admin_public_ips" {
   value = {
     dduportal       = ["109.88.234.158"],
-    lemeurherve     = ["176.185.227.180", "2a01:e0a:b69:da30:5d59:cfbe:b675:e66d"],
+    lemeurherve     = ["176.185.227.180"],
     smerle33        = ["82.64.5.129"],
     mwaite          = ["162.142.59.220"],
   }
