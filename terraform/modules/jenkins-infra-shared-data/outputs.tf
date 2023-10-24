@@ -2,7 +2,7 @@ output "admin_public_ips" {
   value = {
     dduportal           = ["109.88.234.158"],
     lemeurherve         = ["176.185.227.180"],
-    lemeurherve_tmp_tel = ["37.167.145.195"],
+    lemeurherve_tmp_tel = ["37.167.41.215"],
     smerle33            = ["82.64.5.129"],
     mwaite              = ["162.142.59.220"],
   }
