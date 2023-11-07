@@ -460,14 +460,14 @@ resource "azuread_application" "controller" {
   }
 }
 resource "azuread_service_principal" "controller" {
-  application_id               = azuread_application.controller.application_id
+  client_id                    = azuread_application.controller.client_id
   app_role_assignment_required = false
   owners                       = var.controller_service_principal_ids
 }
 resource "azuread_application_password" "controller" {
-  application_object_id = azuread_application.controller.object_id
-  display_name          = "${var.service_fqdn}-tf-managed"
-  end_date              = var.controller_service_principal_end_date
+  application_id = azuread_application.controller.id
+  display_name   = "${var.service_fqdn}-tf-managed"
+  end_date       = var.controller_service_principal_end_date
 }
 resource "azurerm_role_assignment" "controller_read_packer_prod_images" {
   count                = length(var.controller_packer_rg_ids)
