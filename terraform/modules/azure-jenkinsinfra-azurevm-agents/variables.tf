@@ -39,10 +39,7 @@ variable "default_tags" {
 
 variable "jenkins_infra_ips" {
   type = object({
-    # ldap_ipv4           = string
-    # puppet_ipv4         = string
-    gpg_keyserver_ipv4s = list(string)
-    privatevpn_subnet   = list(string)
+    privatevpn_subnet = list(string)
   })
 }
 

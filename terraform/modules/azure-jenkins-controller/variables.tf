@@ -90,10 +90,9 @@ variable "controller_os_disk_type" {
 
 variable "jenkins_infra_ips" {
   type = object({
-    ldap_ipv4           = string
-    puppet_ipv4         = string
-    gpg_keyserver_ipv4s = list(string)
-    privatevpn_subnet   = list(string)
+    ldap_ipv4         = string
+    puppet_ipv4       = string
+    privatevpn_subnet = list(string)
   })
 }
 

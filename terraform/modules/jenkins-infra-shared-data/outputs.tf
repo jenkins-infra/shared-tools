@@ -19,5 +19,8 @@ output "outbound_ips" {
 output "external_service_ips" {
   value = {
     "ftp-osl.osuosl.org" = ["140.211.166.134", "2605:bc80:3010::134"]
+    "gpg_keyserver" = [
+      "162.213.33.8", "162.213.33.9", # keyserver.ubuntu.com
+    ]
   }
 }
