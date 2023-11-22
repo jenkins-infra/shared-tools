@@ -211,7 +211,7 @@ resource "azurerm_resource_group" "ephemeral_agents" {
 }
 # Storage Account is required by the Azure-VM plugin to allow passing init scripts to VM during the boot phase
 resource "azurerm_storage_account" "ephemeral_agents" {
-  name                     = "${replace(replace(var.service_fqdn, ".", ""), "-", "")}agents"
+  name                     = var.storage_account_name == "" ? "${replace(replace(var.service_fqdn, ".", ""), "-", "")}agents" : var.storage_account_name
   resource_group_name      = azurerm_resource_group.ephemeral_agents.name # must be the same RG as the ephemeral VMs
   location                 = data.azurerm_resource_group.ephemeral_agents_vnet.location
   account_tier             = "Standard"
