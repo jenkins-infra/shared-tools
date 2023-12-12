@@ -9,3 +9,8 @@ variable "aci_agents_resource_group_name" {
 variable "controller_service_principal_id" {
   type = string
 }
+
+variable "custom_role_id" {
+  type    = string
+  default = ""
+}
