@@ -6,9 +6,7 @@ data "azurerm_resource_group" "aci_agents" {
 ## Azure Active Directory Resources to allow controller spawning ACI agents
 ####################################################################################
 resource "azurerm_role_definition" "ephemeral_agents_aci_contributor" {
-  # Create resource only if user does not specify a custom role ID
-  count = var.custom_role_id == "" ? 1 : 0
-  name  = "${var.service_short_stripped_name}-ACI-Contributor"
+  name  = var.role_name
   scope = data.azurerm_resource_group.aci_agents.id
 
   permissions {
@@ -20,6 +18,6 @@ resource "azurerm_role_definition" "ephemeral_agents_aci_contributor" {
 }
 resource "azurerm_role_assignment" "controller_ephemeral_agents_aci_contributor" {
   scope              = data.azurerm_resource_group.aci_agents.id
-  role_definition_id = var.custom_role_id != "" ? var.custom_role_id == "" : azurerm_role_definition.ephemeral_agents_aci_contributor[0].role_definition_resource_id
+  role_definition_id = azurerm_role_definition.ephemeral_agents_aci_contributor.role_definition_resource_id
   principal_id       = var.controller_service_principal_id
 }

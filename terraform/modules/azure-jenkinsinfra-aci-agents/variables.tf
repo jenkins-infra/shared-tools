@@ -1,5 +1,6 @@
-variable "service_short_stripped_name" {
-  type = string
+variable "role_name" {
+  type        = string
+  description = "Must be unique"
 }
 
 variable "aci_agents_resource_group_name" {
@@ -8,9 +9,4 @@ variable "aci_agents_resource_group_name" {
 
 variable "controller_service_principal_id" {
   type = string
-}
-
-variable "custom_role_id" {
-  type    = string
-  default = ""
 }
