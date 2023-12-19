@@ -24,5 +24,5 @@ variable "default_tags" {
 
 variable "storage_active_directory_url" {
   type    = string
-  default = "https://github.com/jenkins-infra/azure"
+  default = ""
 }
