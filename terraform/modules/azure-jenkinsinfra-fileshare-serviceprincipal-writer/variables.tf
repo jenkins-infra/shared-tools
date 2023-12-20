@@ -16,7 +16,7 @@ variable "service_principal_end_date" {
 }
 
 variable "file_share_id" {
-  type    = list(string)
+  type    = string
 }
 
 # Optional variables
