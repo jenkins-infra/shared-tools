@@ -3,15 +3,19 @@ variable "service_fqdn" {
   type = string
 }
 
-variable "storage_service_principal_ids" {
+variable "active_directory_owners" {
   type = list(string)
 }
 
-variable "storage_service_principal_end_date" {
+variable "active_directory_url" {
+  type    = string
+}
+
+variable "service_principal_end_date" {
   type = string
 }
 
-variable "storage_file_share_ids" {
+variable "file_share_id" {
   type    = list(string)
   default = []
 }
@@ -22,7 +26,3 @@ variable "default_tags" {
   default = {}
 }
 
-variable "storage_active_directory_url" {
-  type    = string
-  default = ""
-}
