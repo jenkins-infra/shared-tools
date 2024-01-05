@@ -3,12 +3,17 @@ variable "name" {
   description = "Name of the NAT gateway (and associated Public IP)"
 }
 
-variable "subnet_ids" {
-  type        = list(string)
-  description = "List of subnet (names) to associate with this gateway"
-}
-
 variable "resource_group_name" {
   type        = string
-  description = "Name of the Resource Group in which to create NAT gateways and its resources"
+  description = "Name of the Resource Group to use"
+}
+
+variable "vnet_name" {
+  type        = string
+  description = "Name of the Virtual Network to use"
+}
+
+variable "subnet_names" {
+  type        = list(string)
+  description = "List of subnets (names) to associate with this gateway"
 }
