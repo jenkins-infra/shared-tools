@@ -8,5 +8,5 @@ output "fileshare_serviceprincipal_writer_id" {
 
 output "fileshare_serviceprincipal_writer_password" {
   sensitive = true
-  value = azuread_application_password.fileshare_serviceprincipal_writer.value
+  value     = azuread_application_password.fileshare_serviceprincipal_writer.value
 }

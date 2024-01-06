@@ -8,7 +8,7 @@ variable "active_directory_owners" {
 }
 
 variable "active_directory_url" {
-  type    = string
+  type = string
 }
 
 variable "service_principal_end_date" {
@@ -16,7 +16,7 @@ variable "service_principal_end_date" {
 }
 
 variable "file_share_id" {
-  type    = string
+  type = string
 }
 
 # Optional variables
