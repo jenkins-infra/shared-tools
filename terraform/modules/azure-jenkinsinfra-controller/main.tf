@@ -40,6 +40,7 @@ resource "azurerm_management_lock" "controller_publicip" {
 }
 resource "azurerm_dns_a_record" "controller" {
   count               = var.is_public && var.dns_zone_name != "" ? 1 : 0
+  provider            = azurerm.dns
   name                = trimsuffix(trimsuffix(local.controller_fqdn, var.dns_zone), ".")
   zone_name           = var.dns_zone_name
   resource_group_name = var.dns_resourcegroup_name
@@ -49,6 +50,7 @@ resource "azurerm_dns_a_record" "controller" {
 }
 resource "azurerm_dns_a_record" "private_controller" {
   count               = var.is_public && var.dns_zone_name != "" ? 1 : 0
+  provider            = azurerm.dns
   name                = "private.${azurerm_dns_a_record.controller[0].name}"
   zone_name           = var.dns_zone_name
   resource_group_name = var.dns_resourcegroup_name
