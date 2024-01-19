@@ -60,8 +60,7 @@ The function `terraform()` is defined in https://github.com/jenkins-infra/pipeli
 * `stagingCredentials`: (Optional - Default: "[]") list of Jenkins secrets to be used for the staging environment
 * `productionCredentials`: (Optional - Default: "[]") list of Jenkins secrets to be used for the *production* environment
 * `cronTriggerExpression`: (Optional - Default: "@daily") cron expression (as a string) to define when to trigger a build
-* `agentContainerImage`: (Optional - Default: "jenkinsciinfra/hashicorp-tools:<latest stable tag>") Docker image to use as agent,
-providing a reproductible environment (fixed versions of Terraform, trivy, golang, etc.)
+* `agentLabel`:  (Optional - Default: "jnlp-linux-arm64"), Agent use, providing a reproductible environment (fixed versions of Terraform, trivy, golang, etc.) from the ALLINONE: https://github.com/jenkins-infra/packer-images
 * `runCommonTests`: (Optional - Default: true) Wether to execute the default (and common) test suite
 * `runTests`: (Optional - Default: false)Wether to execute custom tests provided by the current project by running the command `make --directory=./tests/` from the root of the project.
 
