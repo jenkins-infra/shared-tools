@@ -38,8 +38,13 @@ resource "azurerm_management_lock" "controller_publicip" {
   lock_level = "CanNotDelete"
   notes      = "Locked because this is a sensitive resource that should not be removed"
 }
-resource "azurerm_dns_a_record" "controller" {
+data "azurerm_dns_zone" "controller" {
   count               = var.is_public && var.dns_zone_name != "" ? 1 : 0
+  name                = var.dns_zone_name
+  resource_group_name = var.dns_resourcegroup_name
+}
+resource "azurerm_dns_a_record" "controller" {
+  count               = length(data.azurerm_dns_zone.controller)
   provider            = azurerm.dns
   name                = trimsuffix(trimsuffix(local.controller_fqdn, var.dns_zone), ".")
   zone_name           = var.dns_zone_name
@@ -49,7 +54,7 @@ resource "azurerm_dns_a_record" "controller" {
   tags                = var.default_tags
 }
 resource "azurerm_dns_a_record" "private_controller" {
-  count               = var.is_public && var.dns_zone_name != "" ? 1 : 0
+  count               = length(data.azurerm_dns_zone.controller)
   provider            = azurerm.dns
   name                = "private.${azurerm_dns_a_record.controller[0].name}"
   zone_name           = var.dns_zone_name
