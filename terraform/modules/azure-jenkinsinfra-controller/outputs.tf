@@ -38,10 +38,6 @@ output "service_short_stripped_name" {
   value = local.service_short_stripped_name
 }
 
-output "controler_service_principal_id" {
-  value = azuread_service_principal.controller.id
-}
-
 output "controller_service_principal_id" {
   value = azuread_service_principal.controller.id
 }
