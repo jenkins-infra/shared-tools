@@ -279,7 +279,7 @@ resource "azurerm_network_security_rule" "deny_all_inbound_to_controller" {
 ## Azure Active Directory Resources to allow controller spawning azure agents
 ####################################################################################
 resource "azuread_application" "controller" {
-  display_name = var.service_fqdn
+  display_name = local.service_custom_name
   owners       = var.controller_service_principal_ids
   tags         = [for key, value in var.default_tags : "${key}:${value}"]
   required_resource_access {
@@ -311,7 +311,7 @@ resource "azurerm_role_assignment" "controller_read_packer_prod_images" {
   principal_id         = azuread_service_principal.controller.id
 }
 resource "azurerm_role_definition" "controller_vnet_reader" {
-  name  = "Read-${local.service_short_stripped_name}-VNET"
+  name  = "Read-${local.service_custom_name}-VNET"
   scope = data.azurerm_virtual_network.controller.id
 
   permissions {

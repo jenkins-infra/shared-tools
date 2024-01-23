@@ -44,6 +44,11 @@ variable "controller_service_principal_end_date" {
 }
 
 ### Optionals variables
+variable "service_custom_name" {
+  type        = string
+  description = "Custom Service Display Name"
+  default     = ""
+}
 variable "is_public" {
   type    = bool
   default = false
