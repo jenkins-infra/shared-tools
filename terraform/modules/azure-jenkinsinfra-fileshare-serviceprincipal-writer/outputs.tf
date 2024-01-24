@@ -3,7 +3,7 @@ output "service_fqdn" {
 }
 
 output "fileshare_serviceprincipal_writer_id" {
-  value = azuread_application.fileshare_serviceprincipal_writer.client_id
+  value = azuread_service_principal.fileshare_serviceprincipal_writer.id
 }
 
 output "fileshare_serviceprincipal_writer_password" {
