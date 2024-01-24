@@ -40,6 +40,7 @@ resource "azurerm_management_lock" "controller_publicip" {
 }
 data "azurerm_dns_zone" "controller" {
   count               = var.is_public && var.dns_zone_name != "" ? 1 : 0
+  provider            = azurerm.dns
   name                = var.dns_zone_name
   resource_group_name = var.dns_resourcegroup_name
 }
