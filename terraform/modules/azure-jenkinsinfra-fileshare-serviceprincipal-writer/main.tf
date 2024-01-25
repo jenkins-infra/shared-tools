@@ -17,16 +17,21 @@ resource "azuread_application" "fileshare_serviceprincipal_writer" {
     homepage_url = var.active_directory_url
   }
 }
-resource "azuread_service_principal" "fileshare_serviceprincipal_writer" {
-  client_id                    = azuread_application.fileshare_serviceprincipal_writer.client_id
-  app_role_assignment_required = false
-  owners                       = var.active_directory_owners
-}
 resource "azuread_application_password" "fileshare_serviceprincipal_writer" {
   application_id = azuread_application.fileshare_serviceprincipal_writer.id
   display_name   = "${var.service_fqdn}-tf-managed"
   end_date       = var.service_principal_end_date
 }
+
+resource "azuread_service_principal" "fileshare_serviceprincipal_writer" {
+  client_id                    = azuread_application.fileshare_serviceprincipal_writer.client_id
+  app_role_assignment_required = false
+  owners                       = var.active_directory_owners
+}
+resource "azuread_service_principal_password" "fileshare_serviceprincipal_writer" {
+  service_principal_id = azuread_service_principal.fileshare_serviceprincipal_writer.object_id
+}
+
 # https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-authorize-azure-active-directory#verify-role-assignments
 resource "azurerm_role_assignment" "file_share_privileged_contributor" {
   scope                = var.file_share_id
