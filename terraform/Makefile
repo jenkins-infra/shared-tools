@@ -6,6 +6,7 @@ TERRAFORM_PROJECT_DIR ?= $(PWD)
 export TERRAFORM_PROJECT_DIR # Required
 BACKEND_CONFIG_FILE ?= $(TERRAFORM_PROJECT_DIR)/backend-config
 PLAN_FILE_NAME ?= terraform-plan-output.txt
+COMMON_TESTS_FILE_NAME ?= common-tests.log
 
 help: ## Show this Makefile's help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -23,9 +24,9 @@ lint: ## Lint the project files
 # tests: .terraform/plugins/selections.json ## Execute the test harness
 common-tests: $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Execute the "common" test harness from the
 	@echo "Starting common-tests..."
-	@cd $(CURDIR)/tests/ && go mod download && go test -v -timeout 30m > $(TERRAFORM_PROJECT_DIR)/$(TESTS_LOGS_FILE_NAME)
-	@echo "Tests result (output saved in $(TERRAFORM_PROJECT_DIR)/$(TESTS_LOGS_FILE_NAME)):"
-	@tail -n 3 $(TERRAFORM_PROJECT_DIR)/$(TESTS_LOGS_FILE_NAME)
+	@cd $(CURDIR)/tests/ && go mod download && go test -v -timeout 30m > $(TERRAFORM_PROJECT_DIR)/$(COMMON_TESTS_FILE_NAME)
+	@echo "Tests result (output saved in $(TERRAFORM_PROJECT_DIR)/$(COMMON_TESTS_FILE_NAME)):"
+	@tail -n 3 $(TERRAFORM_PROJECT_DIR)/$(COMMON_TESTS_FILE_NAME)
 
 plan: lint $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Write the planned changes into $(PLAN_FILE_NAME) (but do NOT apply them)
 	@cd $(TERRAFORM_PROJECT_DIR) && terraform plan -compact-warnings -lock=false -no-color > $(TERRAFORM_PROJECT_DIR)/$(PLAN_FILE_NAME)
