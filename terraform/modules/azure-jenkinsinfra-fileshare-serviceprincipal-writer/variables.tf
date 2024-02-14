@@ -15,7 +15,11 @@ variable "service_principal_end_date" {
   type = string
 }
 
-variable "file_share_id" {
+variable "file_share_resource_manager_id" {
+  type = string
+}
+
+variable "storage_account_id" {
   type = string
 }
 
