@@ -1,4 +1,4 @@
-name: Bump `shared-tools` Golang version
+name: Bump `shared-tools` Golang version to last paker image used one
 
 scms:
   default:
@@ -13,15 +13,31 @@ scms:
       branch: "{{ .github.branch }}"
 
 sources:
-  latestGoVersion:
-      name: Get latest Golang version
-      kind: golang
+  getPackerImageDeployedVersion:
+    kind: yaml
+    name: Retrieve the current version of the Packer image used in production
+    spec:
+      file: https://raw.githubusercontent.com/jenkins-infra/jenkins-infra/production/hieradata/common.yaml
+      key: $.profile::jenkinscontroller::jcasc.agent_images.azure_vms_gallery_image.version
+  # Retrieving Golang from packer-images to synchronize its version across our infra
+  getGolangVersionFromPackerImages:
+    kind: file
+    name: Get the latest Maven version set in packer-images
+    dependson:
+      - getPackerImageDeployedVersion
+    spec:
+      file: https://raw.githubusercontent.com/jenkins-infra/packer-images/{{ source "getPackerImageDeployedVersion" }}/provisioning/tools-versions.yml
+      matchpattern: 'golang_version:\s(.*)'
+    transformers:
+      - findsubmatch:
+          pattern: 'golang_version:\s(.*)'
+          captureindex: 1
 
 targets:
   go.mod:
-    name: 'Update Golang version to {{ source "latestGoVersion" }}'
+    name: 'Update Golang version to {{ source "getGolangVersionFromPackerImages" }}'
     kind: golang/gomod
-    sourceid: latestGoVersion
+    sourceid: getGolangVersionFromPackerImages
     spec:
       file: terraform/tests/go.mod
     scmid: default
@@ -31,7 +47,7 @@ actions:
     kind: github/pullrequest
     scmid: default
     spec:
-      title: Bump `shared-tools` Golang version to {{ source "latestGoVersion" }}
+      title: Bump `shared-tools` Golang version to {{ source "getGolangVersionFromPackerImages" }}
       labels:
         - dependencies
         - golang
