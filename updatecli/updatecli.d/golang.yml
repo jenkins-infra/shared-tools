@@ -1,4 +1,4 @@
-name: Bump `shared-tools` Golang version to last paker image used one
+name: Bump `shared-tools` Golang version to the version of the last packer image
 
 scms:
   default:
