@@ -17,3 +17,9 @@ variable "subnet_names" {
   type        = list(string)
   description = "List of subnets (names) to associate with this gateway"
 }
+
+variable "amount_outbound_ips" {
+  type        = number
+  description = "Amount of additional outbound Ips to use."
+  default     = 1
+}
