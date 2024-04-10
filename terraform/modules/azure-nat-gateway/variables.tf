@@ -18,7 +18,7 @@ variable "subnet_names" {
   description = "List of subnets (names) to associate with this gateway"
 }
 
-variable "amount_outbound_ips" {
+variable "outbound_ip_count" {
   type        = number
   description = "Amount of additional outbound Ips to use."
   default     = 1
