@@ -20,6 +20,6 @@ variable "subnet_names" {
 
 variable "outbound_ip_count" {
   type        = number
-  description = "Amount of additional outbound Ips to use."
+  description = "Number of outbound IPs to use."
   default     = 1
 }
