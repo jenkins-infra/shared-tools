@@ -22,6 +22,14 @@ resource "azurerm_public_ip" "outbound" {
   allocation_method   = "Static"
   sku                 = "Standard"
 }
+resource "azurerm_public_ip" "additional_outbounds" {
+  count               = var.outbound_ip_count - 1 # Substract 1: the principal outbound IP
+  name                = format("%s-additional-%d", var.name, count.index)
+  location            = data.azurerm_resource_group.outbound.location
+  resource_group_name = data.azurerm_resource_group.outbound.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
 resource "azurerm_nat_gateway" "outbound" {
   name                = var.name
   location            = data.azurerm_resource_group.outbound.location
