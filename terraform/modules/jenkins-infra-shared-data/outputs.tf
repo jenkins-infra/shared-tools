@@ -1,6 +1,6 @@
 output "admin_public_ips" {
   value = {
-    dduportal           = ["89.84.210.161","80.215.221.48"],
+    dduportal           = ["89.84.210.161","176.145.91.162"],
     lemeurherve         = ["176.185.227.180"],
     lemeurherve_tmp_tel = ["176.145.123.59", "37.170.86.165"],
     smerle33            = ["82.64.5.129"],
