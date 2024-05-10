@@ -1,4 +1,4 @@
 locals {
-  service_short_stripped_name   = replace(replace(var.service_fqdn, ".", "-"), "jenkinsio", "jio")
-  nsg_agent_short_stripped_name = "${local.service_short_stripped_name}-kube-agents-${data.azurerm_subnet.kubernetes_agents.name}"
+  short_stripped_service_name   = replace(replace(var.service_fqdn, ".", "-"), "jenkinsio", "jio")
+  short_stripped_nsg_agent_name = "${local.short_stripped_service_name}-kube-agents-${data.azurerm_subnet.kubernetes_agents.name}"
 }
