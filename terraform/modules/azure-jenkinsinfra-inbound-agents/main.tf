@@ -18,7 +18,7 @@ data "azurerm_subnet" "kubernetes_agents" {
 ## Network Security Group and rules
 ####################################################################################
 resource "azurerm_network_security_group" "kubernetes_agents" {
-  name                = local.short_stripped_nsg_agent_name
+  name                = local.stripped_short_nsg_agent_name
   location            = data.azurerm_resource_group.kubernetes_agents_vnet.location
   resource_group_name = var.controller_rg_name
   tags                = var.default_tags
@@ -30,7 +30,7 @@ resource "azurerm_subnet_network_security_group_association" "kubernetes_agents"
 ## Outbound Rules (different set of priorities than Inbound rules) ##
 #trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_ssh_from_kubernetes_agents_to_internet" {
-  name                        = "allow-out-ssh-from-${local.short_stripped_nsg_agent_name}-to-internet"
+  name                        = "allow-out-ssh-from-${local.stripped_short_nsg_agent_name}-to-internet"
   priority                    = 4092
   direction                   = "Outbound"
   access                      = "Allow"
@@ -43,7 +43,7 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_kubernetes_age
   network_security_group_name = azurerm_network_security_group.kubernetes_agents.name
 }
 resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_kubernetes_agents_to_controller" {
-  name                    = "allow-out-jenkins-from-${local.short_stripped_service_name}-to-ctrl"
+  name                    = "allow-out-jenkins-from-${local.stripped_short_service_name}-to-ctrl"
   priority                = 4093
   direction               = "Outbound"
   access                  = "Allow"
@@ -60,7 +60,7 @@ resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_kubernetes
 }
 #trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_http_from_kubernetes_agents_to_internet" {
-  name                    = "allow-out-http-from-${local.short_stripped_nsg_agent_name}-to-internet"
+  name                    = "allow-out-http-from-${local.stripped_short_nsg_agent_name}-to-internet"
   priority                = 4094
   direction               = "Outbound"
   access                  = "Allow"
@@ -76,7 +76,7 @@ resource "azurerm_network_security_rule" "allow_outbound_http_from_kubernetes_ag
   network_security_group_name = azurerm_network_security_group.kubernetes_agents.name
 }
 resource "azurerm_network_security_rule" "deny_all_outbound_from_kubernetes_agents_to_internet" {
-  name                        = "deny-all-out-from-${local.short_stripped_nsg_agent_name}-to-internet"
+  name                        = "deny-all-out-from-${local.stripped_short_nsg_agent_name}-to-internet"
   priority                    = 4095
   direction                   = "Outbound"
   access                      = "Deny"
@@ -90,7 +90,7 @@ resource "azurerm_network_security_rule" "deny_all_outbound_from_kubernetes_agen
 }
 # This rule overrides an Azure-Default rule. its priority must be < 65000.
 resource "azurerm_network_security_rule" "deny_all_outbound_from_kubernetes_agents_to_vnet" {
-  name                        = "deny-all-out-from-${local.short_stripped_nsg_agent_name}-to-vnet"
+  name                        = "deny-all-out-from-${local.stripped_short_nsg_agent_name}-to-vnet"
   priority                    = 4096 # Maximum value allowed by Azure API
   direction                   = "Outbound"
   access                      = "Deny"
@@ -106,7 +106,7 @@ resource "azurerm_network_security_rule" "deny_all_outbound_from_kubernetes_agen
 ## Inbound Rules (different set of priorities than Outbound rules) ##
 # This rule overrides an Azure-Default rule. its priority must be < 65000
 resource "azurerm_network_security_rule" "deny_all_inbound_from_vnet_to_kubernetes_agents" {
-  name                         = "deny-all-in-from-vnet-to-${local.short_stripped_service_name}_kubernetes_agents"
+  name                         = "deny-all-in-from-vnet-to-${local.stripped_short_service_name}_kubernetes_agents"
   priority                     = 4096 # Maximum value allowed by the Azure Terraform Provider
   direction                    = "Inbound"
   access                       = "Deny"
