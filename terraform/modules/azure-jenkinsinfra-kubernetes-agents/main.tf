@@ -51,7 +51,6 @@ resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_kubernetes
   source_port_range       = "*"
   source_address_prefixes = data.azurerm_subnet.kubernetes_agents.address_prefixes
   destination_port_ranges = [
-    "80",    # HTTP for inbound websocket
     "443",   # HTTPS for secured inbound websocket
     "50000", # Direct TCP Inbound protocol
   ]
