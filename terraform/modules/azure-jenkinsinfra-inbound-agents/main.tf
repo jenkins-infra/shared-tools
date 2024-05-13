@@ -36,7 +36,7 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_inbound_agents
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  source_address_prefixes     = data.azurerm_subnet.inbound_agents.address_prefixes
+  source_address_prefixes     = local.agents_cidr
   destination_port_range      = "22"
   destination_address_prefix  = "Internet" # TODO: restrict to GitHub IPs from their meta endpoint (subsection git) - https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-githubs-ip-addresses
   resource_group_name         = var.controller_rg_name
@@ -49,7 +49,7 @@ resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_subnet_to_
   access                  = "Allow"
   protocol                = "Tcp"
   source_port_range       = "*"
-  source_address_prefixes = data.azurerm_subnet.inbound_agents.address_prefixes
+  source_address_prefixes = local.agents_cidr
   destination_port_ranges = [
     "443",   # HTTPS for secured inbound websocket
     "50000", # Direct TCP Inbound protocol
@@ -66,7 +66,7 @@ resource "azurerm_network_security_rule" "allow_outbound_http_from_subnet_to_int
   access                  = "Allow"
   protocol                = "Tcp"
   source_port_range       = "*"
-  source_address_prefixes = data.azurerm_subnet.inbound_agents.address_prefixes
+  source_address_prefixes = local.agents_cidr
   destination_port_ranges = [
     "80",  # HTTP
     "443", # HTTPS
@@ -83,7 +83,7 @@ resource "azurerm_network_security_rule" "deny_all_outbound_from_subnet_to_inter
   protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "*"
-  source_address_prefixes     = data.azurerm_subnet.inbound_agents.address_prefixes
+  source_address_prefixes     = local.agents_cidr
   destination_address_prefix  = "Internet"
   resource_group_name         = var.controller_rg_name
   network_security_group_name = azurerm_network_security_group.inbound_agents.name
@@ -97,7 +97,7 @@ resource "azurerm_network_security_rule" "deny_all_outbound_from_subnet_to_vnet"
   protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "*"
-  source_address_prefixes     = data.azurerm_subnet.inbound_agents.address_prefixes
+  source_address_prefixes     = local.agents_cidr
   destination_address_prefix  = "VirtualNetwork"
   resource_group_name         = var.controller_rg_name
   network_security_group_name = azurerm_network_security_group.inbound_agents.name
@@ -114,7 +114,7 @@ resource "azurerm_network_security_rule" "deny_all_inbound_from_vnet_to_subnet" 
   source_port_range            = "*"
   destination_port_range       = "*"
   source_address_prefix        = "*"
-  destination_address_prefixes = data.azurerm_subnet.inbound_agents.address_prefixes
+  destination_address_prefixes = local.agents_cidr
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.inbound_agents.name
 }

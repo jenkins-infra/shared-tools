@@ -23,6 +23,12 @@ variable "inbound_agents_subnet_name" {
   type        = string
   description = "Name of the Subnet hosting the inbound agents"
 }
+# Optional variables
+variable "inbound_agents_cidrs" {
+  type        = list(string)
+  description = "List of agent CIDRs"
+  default     = []
+}
 variable "default_tags" {
   type    = map(string)
   default = {}
