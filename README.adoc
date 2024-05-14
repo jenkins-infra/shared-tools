@@ -1,0 +1,15 @@
+= Shared Tooling for the Jenkins Infrastructure
+
+This repository contains reusable tooling and scripts used for the link:https://www.jenkins.io/projects/infrastructure/[Jenkins Infrastructure Project].
+
+== Terraform
+
+This directory holds the reusable tooling for terraform-managed resources.
+
+== Docker
+
+This directory holds the scripts used in the Jenkins Docker images:
+
+* https://github.com/jenkinsci/docker
+* https://github.com/jenkinsci/docker-agent
+* https://github.com/jenkinsci/docker-ssh-agent
