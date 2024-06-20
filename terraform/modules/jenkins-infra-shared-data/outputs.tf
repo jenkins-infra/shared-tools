@@ -18,6 +18,10 @@ output "outbound_ips" {
       "20.22.6.81",   # Outbound IPv4 of the cluster LB
       "20.65.63.127", # Outbound IPv4 of the NAT gateway - https://github.com/jenkins-infra/azure-net/blob/7aa7fc5a8a39dd7bafee0e89c4fffe096692baa8/outputs.tf#L26-L28
     ],
+    "infracijenkinsioagents1.jenkins.io" = [
+      "20.122.14.108", # Outbound IPv4 of the NAT gateway -
+      "20.186.70.154", # Outbound IPv4 of the NAT gateway -
+    ],
     "publick8s.jenkins.io" = [
       "20.22.30.74",  # Outbound IPv4 of the cluster LB
       "20.22.30.9",   # Outbound IPv4 of the cluster LB
