@@ -13,9 +13,9 @@ variable "vnet_name" {
   description = "Name of the Virtual Network to use"
 }
 
-variable "subnet_names" {
+variable "subnet_ids" {
   type        = list(string)
-  description = "List of subnets (names) to associate with this gateway"
+  description = "List of subnets IDs to associate with this gateway"
 }
 
 variable "outbound_ip_count" {
