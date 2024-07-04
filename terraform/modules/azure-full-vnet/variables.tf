@@ -47,6 +47,6 @@ variable "subnets" {
 
 variable "peered_vnets" {
   type        = map(string)
-  description = "Map of remove virtual networks to peer with"
+  description = "Map of virtual networks to peer with (map keys are vnet names and map values are vnet IDs)"
   default     = {}
 }
