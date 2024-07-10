@@ -1,8 +1,7 @@
 output "admin_public_ips" {
   value = {
     dduportal           = ["89.84.210.161", "91.174.176.56"],
-    lemeurherve         = ["82.67.38.76", "213.44.85.53"],
-    lemeurherve_hotspot = ["87.88.178.106"],
+    lemeurherve         = ["82.67.38.76", "213.44.85.53", "87.88.178.106"],
     smerle33            = ["82.64.5.129"],
     mwaite              = ["162.142.59.220"],
   }
