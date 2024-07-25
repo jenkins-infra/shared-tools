@@ -1,15 +1,17 @@
 output "admin_public_ips" {
   value = {
-    dduportal           = ["89.84.210.161"],
-    lemeurherve         = ["82.67.38.76", "213.44.85.53", "87.88.178.106"],
-    smerle33            = ["82.64.5.129"],
-    mwaite              = ["162.142.59.220"],
+    dduportal   = ["89.84.210.161"],
+    lemeurherve = ["82.67.38.76", "213.44.85.53", "87.88.178.106"],
+    smerle33    = ["82.64.5.129"],
+    mwaite      = ["162.142.59.220"],
   }
 }
 
 output "outbound_ips" {
   value = {
-    "pkg.jenkins.io" = ["52.202.51.185"],
+    "pkg.jenkins.io"    = ["52.202.51.185"],
+    "usage.jenkins.io"  = ["52.204.62.78"],
+    "census.jenkins.io" = ["52.202.38.86"],
     # Trusted controller outbound IP retrievable in https://github.com/jenkins-infra/azure-net/blob/7aa7fc5a8a39dd7bafee0e89c4fffe096692baa8/outputs.tf#L8-L10
     "trusted.ci.jenkins.io" = ["104.209.128.236"],
     "archives.jenkins.io"   = ["46.101.121.132", "2a03:b0c0:3:d0::9bc:d001"],
@@ -33,6 +35,8 @@ output "outbound_ips" {
       "172.210.175.108",
       "172.210.170.228",
     ],
+    # VPN outbound IP
+    "private.vpn.jenkins.io" = ["172.176.126.194"],
   }
 }
 
