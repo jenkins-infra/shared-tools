@@ -195,6 +195,11 @@ resource "azurerm_role_assignment" "controller_contributor_in_ephemeral_agent_re
   role_definition_name = "Virtual Machine Contributor"
   principal_id         = var.controller_service_principal_id
 }
+resource "azurerm_role_assignment" "controller_io_manage_net_interfaces_subnet_ephemeral_agents" {
+  scope                = data.azurerm_subnet.ephemeral_agents.id
+  role_definition_name = "Virtual Machine Contributor"
+  principal_id         = var.controller_service_principal_id
+}
 resource "azurerm_role_assignment" "controller_network_contributor_in_ephemeral_agent_resourcegroup" {
   scope                = azurerm_resource_group.ephemeral_agents.id
   role_definition_name = "Network Contributor"
