@@ -68,8 +68,7 @@ resource "azurerm_network_security_rule" "allow_outbound_hkp_tcp_from_ephemeral_
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.ephemeral_agents.name
 }
-
-
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_ssh_from_ephemeral_agents_to_internet" {
   name                        = "allow-outbound-ssh-from-${var.service_short_stripped_name}_ephemeral_agents-to-internet"
   priority                    = 4092
@@ -101,6 +100,7 @@ resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_ephemeral_
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.ephemeral_agents.name
 }
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_http_from_ephemeral_agents_to_internet" {
   name                    = "allow-outbound-http-from-${var.service_short_stripped_name}_ephemeral_agents-to-internet"
   priority                = 4094

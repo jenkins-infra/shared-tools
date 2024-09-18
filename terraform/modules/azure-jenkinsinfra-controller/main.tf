@@ -189,6 +189,7 @@ resource "azurerm_network_security_rule" "allow_outbound_puppet_from_controller_
   resource_group_name         = azurerm_resource_group.controller.name
   network_security_group_name = azurerm_network_security_group.controller.name
 }
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_http_from_controller_to_internet" {
   name                        = "allow-outbound-http-from-${local.service_short_stripped_name}-controller-to-internet"
   priority                    = 4089

@@ -85,6 +85,7 @@ resource "azurerm_network_security_rule" "allow_out_http_from_aci_agents_to_acp"
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.aci_agents.name
 }
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_ssh_from_aci_agents_to_internet" {
   name                        = "allow-outbound-ssh-from-${var.service_short_stripped_name}_aci_agents-to-internet"
   priority                    = 4092
@@ -116,6 +117,7 @@ resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_aci_agents
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.aci_agents.name
 }
+#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_http_from_aci_agents_to_internet" {
   name                    = "allow-outbound-http-from-${var.service_short_stripped_name}_aci_agents-to-internet"
   priority                = 4094
