@@ -27,11 +27,13 @@ resource "azurerm_subnet" "vnet_subnets" {
   for_each = {
     for index, subnet in var.subnets : subnet.name => subnet
   }
-  name                 = each.key
-  resource_group_name  = local.rg_name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = each.value.address_prefixes
-  service_endpoints    = each.value.service_endpoints
+  name                                          = each.key
+  resource_group_name                           = local.rg_name
+  virtual_network_name                          = azurerm_virtual_network.vnet.name
+  address_prefixes                              = each.value.address_prefixes
+  service_endpoints                             = each.value.service_endpoints
+  private_link_service_network_policies_enabled = try(each.value.private_link_service_network_policies_enabled, true)
+  private_endpoint_network_policies             = try(each.value.private_endpoint_network_policies, "Enabled")
 
   dynamic "delegation" {
     for_each = each.value.delegations

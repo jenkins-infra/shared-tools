@@ -32,9 +32,11 @@ variable "vnet_address_space" {
 
 variable "subnets" {
   type = list(object({
-    name              = string,
-    address_prefixes  = list(string),
-    service_endpoints = list(string),
+    name                                          = string,
+    address_prefixes                              = list(string),
+    service_endpoints                             = list(string),
+    private_endpoint_network_policies             = string,
+    private_link_service_network_policies_enabled = bool,
     delegations = map(object({
       service_delegations = set(object({
         name    = string
