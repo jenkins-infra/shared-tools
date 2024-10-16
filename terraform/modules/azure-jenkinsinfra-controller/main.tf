@@ -310,7 +310,7 @@ resource "azurerm_role_assignment" "controller_read_packer_prod_images" {
   count                = length(var.controller_packer_rg_ids)
   scope                = var.controller_packer_rg_ids[count.index]
   role_definition_name = "Reader"
-  principal_id         = azuread_service_principal.controller.id
+  principal_id         = azuread_service_principal.controller.object_id
 }
 resource "azurerm_role_definition" "controller_vnet_reader" {
   name  = "Read-${local.service_custom_name}-VNET"
@@ -323,5 +323,5 @@ resource "azurerm_role_definition" "controller_vnet_reader" {
 resource "azurerm_role_assignment" "controller_vnet_reader" {
   scope              = data.azurerm_virtual_network.controller.id
   role_definition_id = azurerm_role_definition.controller_vnet_reader.role_definition_resource_id
-  principal_id       = azuread_service_principal.controller.id
+  principal_id       = azuread_service_principal.controller.object_id
 }

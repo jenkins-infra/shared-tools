@@ -29,19 +29,19 @@ resource "azuread_service_principal" "fileshare_serviceprincipal_writer" {
   owners                       = var.active_directory_owners
 }
 resource "azuread_service_principal_password" "fileshare_serviceprincipal_writer" {
-  service_principal_id = azuread_service_principal.fileshare_serviceprincipal_writer.object_id
+  service_principal_id = azuread_service_principal.fileshare_serviceprincipal_writer.id
 }
 
 # https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-authorize-azure-active-directory#verify-role-assignments
 resource "azurerm_role_assignment" "file_share_privileged_contributor" {
   scope                = var.file_share_resource_manager_id
   role_definition_name = "Storage File Data Privileged Contributor"
-  principal_id         = azuread_service_principal.fileshare_serviceprincipal_writer.id
+  principal_id         = azuread_service_principal.fileshare_serviceprincipal_writer.object_id
 }
 
 # Needed so the service principal can access the Storage Account access key to generate a SAS token
 resource "azurerm_role_assignment" "storage_account_privileged_contributor" {
   scope                = var.storage_account_id
   role_definition_name = "Storage Account Contributor"
-  principal_id         = azuread_service_principal.fileshare_serviceprincipal_writer.id
+  principal_id         = azuread_service_principal.fileshare_serviceprincipal_writer.object_id
 }
