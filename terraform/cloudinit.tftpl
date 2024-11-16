@@ -12,6 +12,10 @@ write_files:
       [agent]
       certname = ${hostname}
 runcmd:
+  # Map jenkins User UID to container's jenkins UID
+  # As ubuntu maps to 1000 on 22.04
+  - [ groupmod, -g, "998", ${coalesce(admin_username, "jenkins-infra-team")} ]
+  - [ usermod, -u, "998", ${coalesce(admin_username, "jenkins-infra-team")} ]
   - [ mkdir, -p, /run/puppetinstall ]
   - [ apt-get, update, --yes, --quiet ]
   - [ apt-get, install, --yes, --quiet, --no-install-recommends, bash-completion, cron, htop, iotop, locales, vim, wget ]
@@ -22,5 +26,6 @@ runcmd:
   - [ apt-get, install, "puppet-agent=6.*", --yes, --quiet, --no-install-recommends ]
   # see above comment in the "write_files" section
   - [ mv, /run/puppetinstall/puppet.conf, /etc/puppetlabs/puppet/puppet.conf]
+  - grep -q puppet.jenkins.io /etc/hosts || echo "$(dig +short A puppet.jenkins.io | tail -n1) puppet.jenkins.io" | tee -a /etc/hosts
   - [ systemctl, enable, puppet ]
   - [ systemctl, start, puppet ]
