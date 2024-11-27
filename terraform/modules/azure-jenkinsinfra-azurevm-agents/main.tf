@@ -78,7 +78,44 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_ephemeral_agen
   source_port_range           = "*"
   source_address_prefixes     = data.azurerm_subnet.ephemeral_agents.address_prefixes
   destination_port_range      = "22"
-  destination_address_prefix  = "Internet" # TODO: restrict to GitHub IPs from their meta endpoint (subsection git) - https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-githubs-ip-addresses
+  destination_address_prefixes = [
+    "192.30.252.0/22",
+    "185.199.108.0/22",
+    "140.82.112.0/20",
+    "143.55.64.0/20",
+    "2a0a:a440::/29",
+    "2606:50c0::/32",
+    "20.201.28.151/32",
+    "20.205.243.166/32",
+    "20.87.245.0/32",
+    "4.237.22.38/32",
+    "20.207.73.82/32",
+    "20.27.177.113/32",
+    "20.200.245.247/32",
+    "20.175.192.147/32",
+    "20.233.83.145/32",
+    "20.29.134.23/32",
+    "20.199.39.232/32",
+    "20.217.135.5/32",
+    "4.225.11.198/32",
+    "4.208.26.197/32",
+    "20.26.156.215/32",
+    "20.201.28.152/32",
+    "20.205.243.160/32",
+    "20.87.245.4/32",
+    "4.237.22.40/32",
+    "20.207.73.83/32",
+    "20.27.177.118/32",
+    "20.200.245.248/32",
+    "20.175.192.146/32",
+    "20.233.83.149/32",
+    "20.29.134.19/32",
+    "20.199.39.227/32",
+    "20.217.135.4/32",
+    "4.225.11.200/32",
+    "4.208.26.198/32",
+    "20.26.156.214/32"
+  ]
   resource_group_name         = var.controller_rg_name
   network_security_group_name = azurerm_network_security_group.ephemeral_agents.name
 }
