@@ -1,0 +1,43 @@
+name: Update allowed GitHub inbound IPs
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: "{{ .github.user }}"
+      email: "{{ .github.email }}"
+      owner: "{{ .github.owner }}"
+      repository: "{{ .github.repository }}"
+      token: "{{ requiredEnv .github.token }}"
+      username: "{{ .github.username }}"
+      branch: "{{ .github.branch }}"
+
+sources:
+  githubInboundIpV4:
+    kind: json
+    name: get GitHub git IPv4s
+    spec:
+      file: https://api.github.com/meta
+      key: git
+    transformers:
+      - trimprefix: "["
+      - trimsuffix: "]"
+
+targets:
+  updateGitHubIPs:
+    name: Update allowed IPs
+    kind: hcl
+    sourceid: githubInboundIpV4
+    spec:
+      file: terraform/modules/azure-jenkinsinfra-azurevm-agents/locals.tf
+      path: locals.github_destination_address_prefixes
+    scmid: default
+
+actions:
+  default:
+    kind: github/pullrequest
+    scmid: default
+    title: Update allowed GitHub `git` endpoints for VM agents
+    spec:
+      labels:
+        - github-git-ips
