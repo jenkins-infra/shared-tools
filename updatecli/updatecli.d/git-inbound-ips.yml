@@ -31,6 +31,7 @@ targets:
     spec:
       file: terraform/modules/azure-jenkinsinfra-azurevm-agents/locals.tf
       path: locals.github_destination_address_prefixes
+    scmid: default
 
 actions:
   default:
