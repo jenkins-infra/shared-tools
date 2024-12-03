@@ -78,6 +78,7 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_ephemeral_agen
   source_port_range           = "*"
   source_address_prefixes     = data.azurerm_subnet.ephemeral_agents.address_prefixes
   destination_port_range      = "22"
+  #Filter only for ipv4 ips
   destination_address_prefixes = [
     for ip in split(" ", local.github_destination_address_prefixes) : ip
     if can(cidrnetmask("${ip}/32"))
