@@ -81,7 +81,7 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_ephemeral_agen
   #Filter only for ipv4 ips
   destination_address_prefixes = [
     for ip in split(" ", local.github_destination_address_prefixes) : ip
-    if can(cidrnetmask("${ip}/32"))
+    if can(cidrnetmask(ip))
   ]
   resource_group_name         = var.controller_rg_name
   network_security_group_name = azurerm_network_security_group.ephemeral_agents.name
