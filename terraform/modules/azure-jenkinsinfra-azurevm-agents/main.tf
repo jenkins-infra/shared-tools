@@ -78,11 +78,12 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_ephemeral_agen
   source_port_range           = "*"
   source_address_prefixes     = data.azurerm_subnet.ephemeral_agents.address_prefixes
   destination_port_range      = "22"
+  destination_address_prefix  = "Internet" # setting back to all internet as it crash the packer-images build 
   #Filter only for ipv4 ips
-  destination_address_prefixes = [
-    for ip in split(" ", local.github_destination_address_prefixes) : ip
-    if can(cidrnetmask(ip))
-  ]
+  #destination_address_prefixes = [
+  #  for ip in split(" ", local.github_destination_address_prefixes) : ip
+  #  if can(cidrnetmask(ip))
+  #]
   resource_group_name         = var.controller_rg_name
   network_security_group_name = azurerm_network_security_group.ephemeral_agents.name
 }
