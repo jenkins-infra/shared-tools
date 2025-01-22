@@ -24,7 +24,7 @@ lint: ## Lint the project files
 # tests: .terraform/plugins/selections.json ## Execute the test harness
 common-tests: $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Execute the "common" test harness from the
 	@echo "Starting common-tests..."
-	@cd $(CURDIR)/tests/ && go mod download && go test -v -timeout 30m
+	@cd $(CURDIR)/tests/ && go mod download && export TF_VAR_terratest=1 && go test -v -timeout 30m
 	@echo "End of common-tests."
 
 plan: lint $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Write the planned changes into $(PLAN_FILE_NAME) (but do NOT apply them)
