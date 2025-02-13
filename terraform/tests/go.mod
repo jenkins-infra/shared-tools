@@ -1,6 +1,6 @@
 module github.com/jenkins-infra/shared-tools/tests
 
-go 1.23
+go 1.24
 
 require github.com/gruntwork-io/terratest v0.37.5
 
