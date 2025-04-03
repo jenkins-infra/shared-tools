@@ -99,6 +99,13 @@ resource "azurerm_linux_virtual_machine" "controller" {
     azurerm_network_interface.controller.id,
   ]
 
+  dynamic "identity" {
+    for_each = var.enable_vm_system_identity ? ["SystemAssigned"] : []
+    content {
+      type = "SystemAssigned"
+    }
+  }
+
   admin_ssh_key {
     username   = var.admin_username
     public_key = var.admin_ssh_publickey

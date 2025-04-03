@@ -122,3 +122,8 @@ variable "agent_ip_prefixes" {
   type    = list(string)
   default = []
 }
+
+variable "enable_vm_system_identity" {
+  type    = bool
+  default = false
+}
