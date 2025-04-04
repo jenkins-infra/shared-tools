@@ -6,6 +6,10 @@ output "controller_public_ipv4" {
   value = var.is_public ? azurerm_public_ip.controller[0].ip_address : azurerm_linux_virtual_machine.controller.private_ip_address
 }
 
+output "controller_public_ipv6" {
+  value = var.is_public && var.enable_public_ipv6 ? azurerm_public_ip.controller_ipv6[0].ip_address : ""
+}
+
 output "controller_private_ipv4" {
   value = azurerm_linux_virtual_machine.controller.private_ip_address
 }

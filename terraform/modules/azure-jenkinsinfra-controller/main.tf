@@ -38,6 +38,23 @@ resource "azurerm_management_lock" "controller_publicip" {
   lock_level = "CanNotDelete"
   notes      = "Locked because this is a sensitive resource that should not be removed"
 }
+resource "azurerm_public_ip" "controller_ipv6" {
+  count               = var.is_public && var.enable_public_ipv6 ? 1 : 0
+  name                = "${local.controller_fqdn}-ipv6"
+  location            = azurerm_resource_group.controller.location
+  resource_group_name = azurerm_resource_group.controller.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  ip_version          = "IPv6"
+  tags                = var.default_tags
+}
+resource "azurerm_management_lock" "controller_publicipv6" {
+  count      = var.is_public && var.enable_public_ipv6 ? 1 : 0
+  name       = "${local.service_stripped_name}-controller-publicipv6"
+  scope      = azurerm_public_ip.controller_ipv6[0].id
+  lock_level = "CanNotDelete"
+  notes      = "Locked because this is a sensitive resource that should not be removed"
+}
 data "azurerm_dns_zone" "controller" {
   count               = var.is_public && var.dns_zone_name != "" ? 1 : 0
   provider            = azurerm.dns
@@ -74,7 +91,21 @@ resource "azurerm_network_interface" "controller" {
     name                          = var.is_public ? "external" : "internal"
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = var.is_public ? azurerm_public_ip.controller[0].id : null
+    private_ip_address_version    = "IPv4"
     subnet_id                     = data.azurerm_subnet.controller.id
+    primary                       = true
+  }
+
+  dynamic "ip_configuration" {
+    for_each = var.is_public && var.enable_public_ipv6 ? ["IPv6"] : []
+    content {
+      name                          = var.is_public ? "external-ipv6" : "internal-ipv6"
+      private_ip_address_allocation = "Dynamic"
+      public_ip_address_id          = var.is_public ? azurerm_public_ip.controller_ipv6[0].id : null
+      private_ip_address_version    = "IPv6"
+      subnet_id                     = data.azurerm_subnet.controller.id
+      primary                       = false
+    }
   }
 }
 resource "azurerm_managed_disk" "controller_data" {
