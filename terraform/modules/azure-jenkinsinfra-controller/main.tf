@@ -159,10 +159,11 @@ resource "azurerm_linux_virtual_machine" "controller" {
     disk_size_gb         = var.controller_os_disk_size_gb
   }
 
+  # Instances with a 'p' in their vm size are 'arm64' which requires a different image (SKU/offer)
   source_image_reference {
     publisher = "Canonical"
-    offer     = "0001-com-ubuntu-minimal-jammy"
-    sku       = "minimal-22_04-lts-gen2"
+    offer     = strcontains(var.controller_vm_size, "p") ? "0001-com-ubuntu-server-jammy" : "0001-com-ubuntu-minimal-jammy"
+    sku       = strcontains(var.controller_vm_size, "p") ? "22_04-lts-arm64" : "minimal-22_04-lts-gen2"
     version   = "latest"
   }
 }
