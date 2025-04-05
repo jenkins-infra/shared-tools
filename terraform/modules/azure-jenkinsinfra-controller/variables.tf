@@ -40,7 +40,8 @@ variable "controller_service_principal_ids" {
 }
 
 variable "controller_service_principal_end_date" {
-  type = string
+  type    = string
+  default = ""
 }
 
 ### Optionals variables

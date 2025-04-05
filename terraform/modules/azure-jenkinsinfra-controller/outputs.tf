@@ -43,5 +43,5 @@ output "service_short_stripped_name" {
 }
 
 output "controller_service_principal_id" {
-  value = azuread_service_principal.controller.object_id
+  value = local.controller_principal_id
 }

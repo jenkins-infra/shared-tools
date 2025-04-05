@@ -341,11 +341,13 @@ resource "azuread_application" "controller" {
   }
 }
 resource "azuread_service_principal" "controller" {
+  count                        = var.enable_vm_system_identity ? 0 : 1
   client_id                    = azuread_application.controller.client_id
   app_role_assignment_required = false
   owners                       = var.controller_service_principal_ids
 }
 resource "azuread_application_password" "controller" {
+  count          = var.enable_vm_system_identity ? 0 : 1
   application_id = azuread_application.controller.id
   display_name   = "${var.service_fqdn}-tf-managed"
   end_date       = var.controller_service_principal_end_date
@@ -354,7 +356,7 @@ resource "azurerm_role_assignment" "controller_read_packer_prod_images" {
   count                = length(var.controller_packer_rg_ids)
   scope                = var.controller_packer_rg_ids[count.index]
   role_definition_name = "Reader"
-  principal_id         = azuread_service_principal.controller.object_id
+  principal_id         = local.controller_principal_id
 }
 resource "azurerm_role_definition" "controller_vnet_reader" {
   name  = "Read-${local.service_custom_name}-VNET"
@@ -367,5 +369,5 @@ resource "azurerm_role_definition" "controller_vnet_reader" {
 resource "azurerm_role_assignment" "controller_vnet_reader" {
   scope              = data.azurerm_virtual_network.controller.id
   role_definition_id = azurerm_role_definition.controller_vnet_reader.role_definition_resource_id
-  principal_id       = azuread_service_principal.controller.object_id
+  principal_id       = local.controller_principal_id
 }
