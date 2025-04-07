@@ -118,6 +118,11 @@ resource "azurerm_managed_disk" "controller_data" {
 
   tags = var.default_tags
 }
+## trick to avoid dynamics/static on locals to fail
+data "azurerm_virtual_machine" "controller" {
+  name                = azurerm_linux_virtual_machine.controller.name
+  resource_group_name = azurerm_linux_virtual_machine.controller.resource_group_name
+}
 resource "azurerm_linux_virtual_machine" "controller" {
   name                            = local.controller_fqdn
   resource_group_name             = azurerm_resource_group.controller.name
@@ -358,6 +363,7 @@ resource "azurerm_role_assignment" "controller_read_packer_prod_images" {
   scope                = var.controller_packer_rg_ids[count.index]
   role_definition_name = "Reader"
   principal_id         = local.controller_principal_id
+  depends_on           = [azurerm_linux_virtual_machine.controller]
 }
 resource "azurerm_role_definition" "controller_vnet_reader" {
   name  = "Read-${local.service_custom_name}-VNET"
@@ -371,4 +377,5 @@ resource "azurerm_role_assignment" "controller_vnet_reader" {
   scope              = data.azurerm_virtual_network.controller.id
   role_definition_id = azurerm_role_definition.controller_vnet_reader.role_definition_resource_id
   principal_id       = local.controller_principal_id
+  depends_on         = [azurerm_linux_virtual_machine.controller]
 }
