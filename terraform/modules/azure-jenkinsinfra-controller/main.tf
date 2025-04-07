@@ -131,7 +131,7 @@ resource "azurerm_linux_virtual_machine" "controller" {
   ]
 
   dynamic "identity" {
-    for_each = var.enable_vm_system_identity ? ["SystemAssigned"] : []
+    for_each = var.controller_service_principal_end_date == "" ? ["SystemAssigned"] : []
     content {
       type = "SystemAssigned"
     }
@@ -325,6 +325,7 @@ resource "azurerm_network_security_rule" "deny_all_inbound_to_controller" {
 ## Azure Active Directory Resources to allow controller spawning azure agents
 ####################################################################################
 resource "azuread_application" "controller" {
+  count        = var.controller_service_principal_end_date == "" ? 0 : 1
   display_name = local.service_custom_name
   owners       = var.controller_service_principal_ids
   tags         = [for key, value in var.default_tags : "${key}:${value}"]
@@ -341,14 +342,14 @@ resource "azuread_application" "controller" {
   }
 }
 resource "azuread_service_principal" "controller" {
-  count                        = var.enable_vm_system_identity ? 0 : 1
-  client_id                    = azuread_application.controller.client_id
+  count                        = var.controller_service_principal_end_date == "" ? 0 : 1
+  client_id                    = azuread_application.controller[0].client_id
   app_role_assignment_required = false
   owners                       = var.controller_service_principal_ids
 }
 resource "azuread_application_password" "controller" {
-  count          = var.enable_vm_system_identity ? 0 : 1
-  application_id = azuread_application.controller.id
+  count          = var.controller_service_principal_end_date == "" ? 0 : 1
+  application_id = azuread_application.controller[0].id
   display_name   = "${var.service_fqdn}-tf-managed"
   end_date       = var.controller_service_principal_end_date
 }

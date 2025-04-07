@@ -124,11 +124,6 @@ variable "agent_ip_prefixes" {
   default = []
 }
 
-variable "enable_vm_system_identity" {
-  type    = bool
-  default = false
-}
-
 variable "enable_public_ipv6" {
   type    = bool
   default = false
