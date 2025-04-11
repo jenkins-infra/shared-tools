@@ -299,10 +299,34 @@ resource "azurerm_network_security_rule" "allow_inbound_jenkins_to_controller" {
     "443",   # HTTPS
     "50000", # Direct TCP Inbound protocol
   ]
-  destination_address_prefixes = compact([
-    azurerm_linux_virtual_machine.controller.private_ip_address,
+  destination_address_prefixes = compact(flatten([
+    [for ip in azurerm_linux_virtual_machine.controller.private_ip_addresses :
+      ip if can(cidrnetmask("${ip}/32"))
+    ],
     var.is_public ? azurerm_public_ip.controller[0].ip_address : "",
-  ])
+  ]))
+  resource_group_name         = azurerm_resource_group.controller.name
+  network_security_group_name = azurerm_network_security_group.controller.name
+}
+resource "azurerm_network_security_rule" "allow_inbound_http6_to_controller" {
+  count                 = var.is_public && var.enable_public_ipv6 ? 1 : 0
+  name                  = "allow-inbound-http6-to-${local.service_short_stripped_name}-controller"
+  priority              = 4081
+  direction             = "Inbound"
+  access                = "Allow"
+  protocol              = "Tcp"
+  source_port_range     = "*"
+  source_address_prefix = var.is_public ? "*" : "VirtualNetwork"
+  destination_port_ranges = [
+    "80",  # HTTP (for redirections to HTTPS)
+    "443", # HTTPS
+  ]
+  destination_address_prefixes = compact(flatten([
+    [for ip in azurerm_linux_virtual_machine.controller.private_ip_addresses :
+      ip if !can(cidrnetmask("${ip}/32"))
+    ],
+    azurerm_public_ip.controller_ipv6[0].ip_address,
+  ]))
   resource_group_name         = azurerm_resource_group.controller.name
   network_security_group_name = azurerm_network_security_group.controller.name
 }
