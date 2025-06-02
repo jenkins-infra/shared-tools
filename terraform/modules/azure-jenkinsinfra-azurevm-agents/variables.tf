@@ -29,7 +29,8 @@ variable "controller_ips" {
 }
 
 variable "controller_service_principal_id" {
-  type = string
+  type        = string
+  description = "The controller Azure identity ID which can manage Azure VM agents."
 }
 
 variable "default_tags" {
@@ -51,4 +52,10 @@ variable "custom_resourcegroup_name" {
 variable "storage_account_name" {
   type    = string
   default = ""
+}
+
+variable "additional_identities" {
+  type        = list(string)
+  description = "A list of Azure identity IDs, in addition to controller_service_principal_id, which can manage Azure VM agents."
+  default     = []
 }
