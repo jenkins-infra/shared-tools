@@ -52,3 +52,21 @@ variable "peered_vnets" {
   description = "Map of virtual networks to peer with (map keys are vnet names and map values are vnet IDs)"
   default     = {}
 }
+
+variable "gateway_name" {
+  type        = string
+  description = "Name of the NAT gateway (and associated Public IP) if the vnet should use one"
+  default     = ""
+}
+
+variable "gateway_subnets_exclude" {
+  type        = list(string)
+  description = "Exclude these subnets from the gateway (default is to associate all subnets. This variable is to support a legacy case of the old publick8s cluster network config)"
+  default     = []
+}
+
+variable "outbound_ip_count" {
+  type        = number
+  description = "Number of outbound IPs to use."
+  default     = 1
+}

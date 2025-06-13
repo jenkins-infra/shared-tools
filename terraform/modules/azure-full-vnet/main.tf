@@ -1,3 +1,6 @@
+####################################################################################
+## Virtual Network
+####################################################################################
 resource "azurerm_resource_group" "vnet_rg" {
   count    = var.use_existing_rg ? 0 : 1
   name     = var.base_name
@@ -10,11 +13,6 @@ data "azurerm_resource_group" "vnet_rg" {
   name  = var.base_name
 }
 
-locals {
-  rg_name   = var.use_existing_rg ? data.azurerm_resource_group.vnet_rg[0].name : azurerm_resource_group.vnet_rg[0].name
-  vnet_name = length(var.custom_vnet_name) > 0 ? var.custom_vnet_name : "${var.base_name}-vnet"
-}
-
 resource "azurerm_virtual_network" "vnet" {
   name                = local.vnet_name
   location            = var.location
@@ -23,6 +21,9 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = var.tags
 }
 
+####################################################################################
+## Virtual Network side object: Subnets / Peerings
+####################################################################################
 resource "azurerm_subnet" "vnet_subnets" {
   for_each = {
     for index, subnet in var.subnets : subnet.name => subnet
@@ -50,8 +51,6 @@ resource "azurerm_subnet" "vnet_subnets" {
     }
   }
 }
-
-# var.peered_vnets
 resource "azurerm_virtual_network_peering" "vnet_peering" {
   for_each                     = var.peered_vnets
   name                         = "${azurerm_virtual_network.vnet.name}-to-${each.key}"
@@ -62,4 +61,46 @@ resource "azurerm_virtual_network_peering" "vnet_peering" {
   allow_forwarded_traffic      = false
   allow_gateway_transit        = false
   use_remote_gateways          = false
+}
+
+####################################################################################
+## NAT gateway
+####################################################################################
+resource "azurerm_public_ip" "outbound" {
+  count               = var.gateway_name == "" ? 0 : 1
+  name                = var.gateway_name
+  location            = var.location
+  resource_group_name = local.rg_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+resource "azurerm_public_ip" "additional_outbounds" {
+  count               = var.gateway_name == "" ? 0 : var.outbound_ip_count - 1 # Substract 1: the principal outbound IP
+  name                = format("%s-additional-%d", var.gateway_name, count.index)
+  location            = var.location
+  resource_group_name = local.rg_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+resource "azurerm_nat_gateway_public_ip_association" "additional_outbounds" {
+  count                = var.gateway_name == "" ? 0 : length(azurerm_public_ip.additional_outbounds)
+  nat_gateway_id       = azurerm_nat_gateway.outbound[0].id
+  public_ip_address_id = azurerm_public_ip.additional_outbounds[count.index].id
+}
+resource "azurerm_nat_gateway" "outbound" {
+  count               = var.gateway_name == "" ? 0 : 1
+  name                = var.gateway_name
+  location            = var.location
+  resource_group_name = local.rg_name
+  sku_name            = "Standard"
+}
+resource "azurerm_nat_gateway_public_ip_association" "outbound" {
+  count                = var.gateway_name == "" ? 0 : 1
+  nat_gateway_id       = azurerm_nat_gateway.outbound[0].id
+  public_ip_address_id = azurerm_public_ip.outbound[0].id
+}
+resource "azurerm_subnet_nat_gateway_association" "outbound" {
+  for_each       = local.gateway_subnet_ids
+  subnet_id      = each.value
+  nat_gateway_id = azurerm_nat_gateway.outbound[0].id
 }
