@@ -11,6 +11,15 @@ write_files:
       server = puppet.jenkins.io
       [agent]
       certname = ${hostname}
+  - path: /etc/apt/sources.list.d/puppet6.list
+    owner: root:root
+    permissions: '0644'
+    content: |
+      # Puppet 6 Repository
+      # Keep using focal (as there are no older version)
+      # Keep trusting it as GPG key is expired forever
+      deb [trusted=yes] http://apt.puppetlabs.com focal puppet6
+# runcmd is executed after the 'write_file' module
 runcmd:
   # Map jenkins User UID to container's jenkins UID
   # As ubuntu maps to 1000 on 22.04
@@ -18,10 +27,8 @@ runcmd:
   - [ usermod, -u, "998", ${coalesce(admin_username, "jenkins-infra-team")} ]
   - [ mkdir, -p, /run/puppetinstall ]
   - [ apt-get, update, --yes, --quiet ]
-  - [ apt-get, install, --yes, --quiet, --no-install-recommends, bash-completion, cron, htop, iotop, locales, vim, wget ]
-  - [ wget, "https://apt.puppetlabs.com/puppet6-release-focal.deb", -O, /run/puppetinstall/puppet6-release-focal.deb ]
+  - [ apt-get, install, --yes, --quiet, --no-install-recommends, bash-completion, curl, cron, htop, iotop, locales, vim, wget ]
   - [ locale-gen, en_US.UTF-8 ]
-  - [ dpkg, -i, /run/puppetinstall/puppet6-release-focal.deb ]
   - [ apt-get, update, --yes, --quiet ]
   - [ apt-get, install, "puppet-agent=6.*", --yes, --quiet, --no-install-recommends ]
   # see above comment in the "write_files" section
