@@ -16,13 +16,7 @@ variable "service_principal_end_date" {
 }
 
 variable "file_share_id" {
-  type    = string
-  default = ""
-}
-
-variable "file_share_resource_manager_id" {
-  type    = string
-  default = ""
+  type = string
 }
 
 variable "storage_account_id" {
