@@ -15,8 +15,14 @@ variable "service_principal_end_date" {
   type = string
 }
 
+variable "file_share_id" {
+  type    = string
+  default = ""
+}
+
 variable "file_share_resource_manager_id" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "storage_account_id" {
@@ -28,4 +34,3 @@ variable "default_tags" {
   type    = map(string)
   default = {}
 }
-
