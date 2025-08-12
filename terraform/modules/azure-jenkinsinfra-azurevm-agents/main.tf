@@ -15,13 +15,6 @@ data "azurerm_subnet" "ephemeral_agents" {
 }
 
 ####################################################################################
-## Shared data inside the Jenkins Infra
-####################################################################################
-module "jenkins_infra_shared_data" {
-  source = "../jenkins-infra-shared-data"
-}
-
-####################################################################################
 ## Network Security Group and rules
 ####################################################################################
 ### Ephemeral Agents
@@ -48,7 +41,7 @@ resource "azurerm_network_security_rule" "allow_outbound_hkp_udp_from_ephemeral_
   destination_port_ranges = [
     "11371", # HKP (OpenPGP KeyServer) - https://github.com/jenkins-infra/helpdesk/issues/3664
   ]
-  destination_address_prefixes = module.jenkins_infra_shared_data.external_service_ips["gpg_keyserver"]
+  destination_address_prefixes = local.external_service_ips["gpg_keyserver"]
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.ephemeral_agents.name
 }
@@ -64,7 +57,7 @@ resource "azurerm_network_security_rule" "allow_outbound_hkp_tcp_from_ephemeral_
   destination_port_ranges = [
     "11371", # HKP (OpenPGP KeyServer) - https://github.com/jenkins-infra/helpdesk/issues/3664
   ]
-  destination_address_prefixes = module.jenkins_infra_shared_data.external_service_ips["gpg_keyserver"]
+  destination_address_prefixes = local.external_service_ips["gpg_keyserver"]
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.ephemeral_agents.name
 }
