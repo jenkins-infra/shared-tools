@@ -23,6 +23,11 @@ resource "azurerm_role_assignment" "custom_zone_read" {
   role_definition_name = "Reader"
   principal_id         = var.principal_id
 }
+resource "azurerm_role_assignment" "custom_zone_manage_acme_assets_txt_record" {
+  scope                = "${azurerm_dns_zone.custom_zone.id}/TXT/_acme-challenge.assets"
+  role_definition_name = "DNS Zone Contributor"
+  principal_id         = var.principal_id
+}
 resource "azurerm_role_assignment" "custom_zone_manage_acme_txt_record" {
   scope                = "${azurerm_dns_zone.custom_zone.id}/TXT/_acme-challenge"
   role_definition_name = "DNS Zone Contributor"
