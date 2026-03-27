@@ -27,7 +27,7 @@ common-tests: $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Exe
 	@echo "End of common-tests."
 
 plan: lint $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Write the planned changes into $(PLAN_FILE_NAME) (but do NOT apply them)
-	@cd $(TERRAFORM_PROJECT_DIR) && terraform plan -compact-warnings -lock=false -no-color > $(TERRAFORM_PROJECT_DIR)/$(PLAN_FILE_NAME)
+	@cd $(TERRAFORM_PROJECT_DIR) && terraform plan -compact-warnings -lock=false -no-color | tee $(TERRAFORM_PROJECT_DIR)/$(PLAN_FILE_NAME)
 	@echo "Terraform plan output can be checked under the file ./$(PLAN_FILE_NAME)"
 
 deploy: lint $(TERRAFORM_PROJECT_DIR)/.terraform/plugins/selections.json ## Deploy (apply) the terraform changes to production
