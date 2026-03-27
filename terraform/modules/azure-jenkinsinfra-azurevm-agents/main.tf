@@ -29,7 +29,6 @@ resource "azurerm_subnet_network_security_group_association" "ephemeral_agents" 
   network_security_group_id = azurerm_network_security_group.ephemeral_agents.id
 }
 ## Outbound Rules (different set of priorities than Inbound rules) ##
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_hkp_udp_from_ephemeral_agents_subnet_to_internet" {
   name                    = "allow-outbound-hkp-udp-from-${var.service_short_stripped_name}_ephemeral_agents-to-internet"
   priority                = 4090
@@ -45,7 +44,6 @@ resource "azurerm_network_security_rule" "allow_outbound_hkp_udp_from_ephemeral_
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.ephemeral_agents.name
 }
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_hkp_tcp_from_ephemeral_agents_subnet_to_internet" {
   name                    = "allow-outbound-hkp-tcp-from-${var.service_short_stripped_name}_ephemeral_agents-to-internet"
   priority                = 4091
@@ -61,7 +59,6 @@ resource "azurerm_network_security_rule" "allow_outbound_hkp_tcp_from_ephemeral_
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.ephemeral_agents.name
 }
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_ssh_from_ephemeral_agents_to_internet" {
   name                    = "allow-outbound-ssh-from-${var.service_short_stripped_name}_ephemeral_agents-to-internet"
   priority                = 4092
@@ -79,7 +76,6 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_ephemeral_agen
   resource_group_name         = var.controller_rg_name
   network_security_group_name = azurerm_network_security_group.ephemeral_agents.name
 }
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_ephemeral_agents_to_controller" {
   name                    = "allow-outbound-jenkins-from-${var.service_short_stripped_name}-agents"
   priority                = 4093
@@ -97,7 +93,6 @@ resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_ephemeral_
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.ephemeral_agents.name
 }
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_http_from_ephemeral_agents_to_internet" {
   name                    = "allow-outbound-http-from-${var.service_short_stripped_name}_ephemeral_agents-to-internet"
   priority                = 4094

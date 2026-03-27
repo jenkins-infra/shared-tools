@@ -28,7 +28,6 @@ resource "azurerm_subnet_network_security_group_association" "inbound_agents" {
   network_security_group_id = azurerm_network_security_group.inbound_agents.id
 }
 ## Outbound Rules (different set of priorities than Inbound rules) ##
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_ssh_from_agents_to_internet" {
   name                        = "allow-out-ssh-from-subnet-to-internet"
   priority                    = 4092
@@ -58,7 +57,6 @@ resource "azurerm_network_security_rule" "allow_outbound_jenkins_from_agents_to_
   resource_group_name          = var.controller_rg_name
   network_security_group_name  = azurerm_network_security_group.inbound_agents.name
 }
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_http_from_agents_to_internet" {
   name                    = "allow-out-http-from-subnet-to-internet"
   priority                = 4094
