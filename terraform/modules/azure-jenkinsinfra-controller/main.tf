@@ -209,7 +209,6 @@ resource "azurerm_network_security_rule" "allow_outbound_ssh_from_controller_to_
   network_security_group_name  = azurerm_network_security_group.controller.name
 }
 # Ignore the rule as it does not detect the IP restriction to only ldap.jenkins.io"s host
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_ldap_from_controller_to_jenkinsldap" {
   name                        = "allow-outbound-ldap-from-${local.service_short_stripped_name}-controller-to-jenkinsldap"
   priority                    = 4086
@@ -224,7 +223,6 @@ resource "azurerm_network_security_rule" "allow_outbound_ldap_from_controller_to
   network_security_group_name = azurerm_network_security_group.controller.name
 }
 # Ignore the rule as it does not detect the IP restriction to only puppet.jenkins.io"s host
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_puppet_from_controller_to_puppetmaster" {
   name                        = "allow-outbound-puppet-from-${local.service_short_stripped_name}-controller-to-puppetmaster"
   priority                    = 4087
@@ -238,7 +236,6 @@ resource "azurerm_network_security_rule" "allow_outbound_puppet_from_controller_
   resource_group_name         = azurerm_resource_group.controller.name
   network_security_group_name = azurerm_network_security_group.controller.name
 }
-#trivy:ignore:azure-network-no-public-egress
 resource "azurerm_network_security_rule" "allow_outbound_http_from_controller_to_internet" {
   name                        = "allow-outbound-http-from-${local.service_short_stripped_name}-controller-to-internet"
   priority                    = 4089
@@ -285,7 +282,6 @@ resource "azurerm_network_security_rule" "allow_inbound_ssh_from_privatevpn_to_c
   ])
 }
 
-#trivy:ignore:azure-network-no-public-ingress
 resource "azurerm_network_security_rule" "allow_inbound_jenkins_to_controller" {
   name                  = "allow-inbound-jenkins-to-${local.service_short_stripped_name}-controller"
   priority              = 4080
