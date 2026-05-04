@@ -21,13 +21,15 @@ write_files:
       deb [trusted=yes] http://apt.puppetlabs.com focal puppet6
 # runcmd is executed after the 'write_file' module
 runcmd:
+%{ if coalesce(admin_username, "root") != "root" }
   # Map jenkins User UID to container's jenkins UID
   # As ubuntu maps to 1000 on 22.04
-  - [ groupmod, -g, "998", ${coalesce(admin_username, "jenkins-infra-team")} ]
-  - [ usermod, -u, "998", ${coalesce(admin_username, "jenkins-infra-team")} ]
+  - [ groupmod, -g, "998", ${coalesce(admin_username, "root")} ]
+  - [ usermod, -u, "998", ${coalesce(admin_username, "root")} ]
+%{ endif }
   - [ mkdir, -p, /run/puppetinstall ]
   - [ apt-get, update, --yes, --quiet ]
-  - [ apt-get, install, --yes, --quiet, --no-install-recommends, bash-completion, curl, cron, htop, iotop, locales, vim, wget ]
+  - [ apt-get, install, --yes, --quiet, --no-install-recommends, bash-completion, curl, cron, htop, iotop, locales, rsync, screen, vim, wget ]
   - [ locale-gen, en_US.UTF-8 ]
   - [ apt-get, update, --yes, --quiet ]
   - [ apt-get, install, "puppet-agent=6.*", --yes, --quiet, --no-install-recommends ]
