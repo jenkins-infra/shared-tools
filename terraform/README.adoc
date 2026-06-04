@@ -5,17 +5,10 @@ This directory holds the reusable tooling for terraform-managed resources for th
 == Requirements
 
 * The following tools (you may check the Docker image used by the CI at https://github.com/jenkins-infra/docker-hashicorp-tools with the up-to-date requirements):
-** Terraform version 1.1.9 CLI to provision the infrastructure
+** Terraform CLI to provision the infrastructure
+*** Get the current production version from the latest published release of https://github.com/jenkins-infra/packer-images/blob/main/provisioning/tools-versions.yml
 ** GNU `make` to ease running the tasks involved in this provisioning
 ** link:https://golang.org/[Golang] to allow testing with link:https://terratest.gruntwork.io/[terratest]
-
-* The git command line to allow cloning the repository and its submodule link:https://github.com/jenkins-infra/shared-tools[shared-tools]
-** From the root of your Terraform project, ensure that you have checked the submodule pointing to the current "shared-tools" repository (hosting this documentation) with the following command:
-
-[source,bash]
-----
-git submodule update --init --recursive
-----
 
 == Workflow
 
@@ -24,6 +17,15 @@ For each terraform project using this tooling, the following hypothesis are made
 * There should be 2 different environments, each one with its own distinct set of cloud credentials (such as APi keys) and link:https://www.terraform.io/language/settings/backends[Terraform Backends]:
 ** "Staging" is used by the test harness and should be either empty or cleaned up regularly to avoid cloud costs
 ** "Production" is where the real life and costs happen (as usual)
+
+* The value of the environment is provided by the [`terraform()` pipeline library](https://github.com/jenkins-infra/pipeline-library/blob/master/vars/terraform.groovy) through the environment variable `TF_VAR_environment` (which may be optionally consumed by Terraform if an input value `environment` is defined in the projet).
+
+* Each environment has a custom AzureRM Storage backend defined, by convention, in 3 partials configuration items:
+** In the Terraform project: a backend of type `azurerm` in the file `backend.tf` with the attributes common to all environments
+** In the Terraform project: a file: `./backend-configs/$(TF_VAR_environment)` with the non sensitive attributes specific to each environment
+** In the environment: the environment variable `TF_BACKEND_ARM_CLIENT_SECRET` should hold the Service Principal secret value
+*** On infra.ci.jenkins.io: provided through Jenkins credentials
+*** On our admin machines: through the OS vault (Keychain access on macOS with `export TF_VAR_environment=production;export TF_BACKEND_ARM_CLIENT_SECRET="$(security find-generic-password -a jenkins-tf-<project name>-backend-arm-secret -w)"` for instance)
 
 * All tasks of the workflow (deployment, tests, etc.) should be done through a <<Jenkins Pipeline>> (read below) associated with the project repository (excepts for edge cases)
 
@@ -72,12 +74,12 @@ terraform(
 	stagingCredentials: [
 		string(variable: 'AWS_ACCESS_KEY_ID', credentialsId: 'ci-terraform-aws-access-key'),
 		string(variable: 'AWS_SECRET_ACCESS_KEY', credentialsId:'ci-terraform-aws-secret-key'),
-		file(variable: 'BACKEND_CONFIG_FILE', credentialsId: 'ci-terraform-aws-backend-config'),
+		string(variable: 'TF_BACKEND_ARM_CLIENT_SECRET', credentialsId:'staging-terraform-aws-backend-config-arm-secret'),
 	],
 	productionCredentials: [
 		string(variable: 'AWS_ACCESS_KEY_ID', credentialsId: 'production-terraform-aws-access-key'),
 		string(variable: 'AWS_SECRET_ACCESS_KEY', credentialsId:'production-terraform-aws-secret-key'),
-		file(variable: 'BACKEND_CONFIG_FILE', credentialsId: 'production-terraform-aws-backend-config'),
+		string(variable: 'TF_BACKEND_ARM_CLIENT_SECRET', credentialsId:'production-terraform-aws-backend-config-arm-secret'),
 	],
 )
 ----
